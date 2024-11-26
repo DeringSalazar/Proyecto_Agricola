@@ -18,7 +18,7 @@ public class AlmacenamientoDAO extends DAO<AlmacenamientoDTO>{
 
     @Override
     public boolean create(AlmacenamientoDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call AlmacenamientoCreate(?,?,?,?,?)");
+        stmt = connection.prepareStatement("call InsertarAlmacenamiento(?,?)");
         stmt.setInt(1, dto.getCantidad());
         stmt.setDate(2, dto.getFecha_Ingreso());
         stmt.setDate(3, dto.getFecha_Retiro());
@@ -70,4 +70,7 @@ public class AlmacenamientoDAO extends DAO<AlmacenamientoDTO>{
         return stmt.executeUpdate()>0;
     }
     
+    public boolean validatePK (Object id) throws SQLException{
+        return read(id) == null;
+    }
 }

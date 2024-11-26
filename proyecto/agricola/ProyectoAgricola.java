@@ -4,10 +4,11 @@
  */
 package proyecto.agricola;
 
+import java.sql.SQLException;
+
 public class ProyectoAgricola {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         
     }
-    
 }

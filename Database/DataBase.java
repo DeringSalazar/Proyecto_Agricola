@@ -15,7 +15,7 @@ public class DataBase {
     private DataBase(){
         try 
         {
-            String URL = "jdbc:mysql://127.0.0.1:3307/produccion_agricola";
+            String URL = "jdbc:mysql://127.0.0.1:3307/agricola";
             String USER = "root";
             String PASSWORD = "";
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -29,7 +29,7 @@ public class DataBase {
         }
         return instance;
     }
-    public Connection getConnection(){
+    public Connection getConnection() throws SQLException{
         return connection;
     }
 }

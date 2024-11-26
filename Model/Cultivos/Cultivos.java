@@ -76,4 +76,15 @@ public class Cultivos {
     public Cultivos() {
         this(0, "", "", 0.0, "", LocalDate.now(), LocalDate.now());
     }
+    
+    @Override
+    public String toString() {
+        return "ID: " + id +
+                "\nNombre: " + nombre +
+                "\nTipo: " + tipo +
+                "\nÁrea Sembrada: " + area_Sembrada +
+                "\nEstado de Crecimiento: " + estado_Crecimiento +
+                "\nFecha de Siembra: " + fecha_Siembra +
+                "\nFecha de Cosecha: " + fecha_cosecha;
+    }
 }

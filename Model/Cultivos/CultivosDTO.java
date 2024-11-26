@@ -52,4 +52,15 @@ public class CultivosDTO {
         this.fecha_Siembra = fecha_Siembra;
         this.fecha_cosecha = fecha_cosecha;
     }
+    
+    @Override
+    public String toString() {
+        return "ID: " + id +
+                "\nNombre: " + nombre +
+                "\nTipo: " + tipo +
+                "\nÁrea Sembrada: " + area_Sembrada +
+                "\nEstado de Crecimiento: " + estado_Crecimiento +
+                "\nFecha de Siembra: " + fecha_Siembra +
+                "\nFecha de Cosecha: " + fecha_cosecha;
+    }
 }

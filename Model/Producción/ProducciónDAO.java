@@ -18,7 +18,7 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public boolean create(ProduccionDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call ProduccionCreate(?,?,?,?,?)");
+        stmt = connection.prepareStatement("call InsertarProduccion(?,?,?,?)");
         stmt.setInt(1, dto.getId());
         stmt.setDate(2, dto.getFecha());
         stmt.setString(3, dto.getCalidad());
@@ -29,7 +29,7 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public ProduccionDTO read(Object id) throws SQLException {
-        stmt = connection.prepareStatement("call ProduccionRead(?)");
+        stmt = connection.prepareStatement("call ReadProduccion(?)");
         stmt.setString(1,String.valueOf(id));
         rs = stmt.executeQuery();
         if(rs.next()){
@@ -46,7 +46,7 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public List<ProduccionDTO> readAll() throws SQLException {
-        stmt = connection.prepareStatement("call CustomerReadAll()");
+        stmt = connection.prepareStatement("call ReadAllProduccion()");
         rs = stmt.executeQuery();
         List<ProduccionDTO> dtos = new ArrayList();
         while(rs.next()){
@@ -75,5 +75,9 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
         stmt = connection.prepareStatement("call CustomerDelete(?)");
         stmt.setString(1, String.valueOf(id));
         return stmt.executeUpdate()>0;
+    }
+    
+    public boolean validatePK (Object id) throws SQLException{
+        return read(id) == null;
     }
 }

@@ -5,10 +5,7 @@
 package Model.Cultivos;
 
 import Model.DAO.DAO;
-import Model.UsuarioDTO;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +31,7 @@ public class CultivosDAO extends DAO<CultivosDTO>{
 
     @Override
     public CultivosDTO read(Object id) throws SQLException {
-        stmt = connection.prepareStatement("call CultivoRead(?)");
+        stmt = connection.prepareStatement("call ReadCultivos(?)");
         stmt.setString(1,String.valueOf(id));
         rs = stmt.executeQuery();
         if (rs.next()) {
@@ -53,7 +50,7 @@ public class CultivosDAO extends DAO<CultivosDTO>{
 
     @Override
     public List<CultivosDTO> readAll() throws SQLException {
-        stmt = connection.prepareStatement("call Cultivo ReadAll()");
+        stmt = connection.prepareStatement("call ReadAllCultivos()");
         rs = stmt.executeQuery();
         List<CultivosDTO> dtos = new ArrayList();
         while(rs.next()){
@@ -88,5 +85,8 @@ public class CultivosDAO extends DAO<CultivosDTO>{
         stmt.setString(1, String.valueOf(id));
         return stmt.executeUpdate()>0;
     }
-    
+
+    public boolean validatePK (Object id) throws SQLException{
+        return read(id) == null;
+    }
 }
