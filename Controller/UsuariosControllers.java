@@ -16,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 public class UsuariosControllers {
     private UsuarioDAO dao;
     private final View view;
-    private UsuarioDTO usuarioLogueado; // Usuario actualmente logueado
+    private UsuarioDTO logueado;
 
     public UsuariosControllers(View view) {
         this.view = view;
@@ -35,7 +35,7 @@ public class UsuariosControllers {
         }
     }
 
-    // Crear un nuevo usuario
+    
     public boolean registrarUsuario(String userName, String password, int rol) {
         if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
             view.showError("El nombre de usuario y la contraseña son obligatorios");
@@ -97,7 +97,7 @@ public class UsuariosControllers {
             }
             // Comparar la contraseña encriptada
             if (usuario.getPassword().equals(convertirSHA256(password))) {
-                usuarioLogueado = usuario;
+                logueado = usuario;
                 view.showSuccess("Inicio de sesión exitoso.");
                 return true;
             } else {
@@ -112,8 +112,8 @@ public class UsuariosControllers {
 
     // Cerrar sesión
     public void cerrarSesion() {
-        if (usuarioLogueado != null) {
-            usuarioLogueado = null;
+        if (logueado != null) {
+            logueado = null;
             view.showSuccess("Sesión cerrada con éxito");
         } else {
             view.showError("No hay ninguna sesión activa");
@@ -122,7 +122,7 @@ public class UsuariosControllers {
 
     // Obtener el usuario actualmente logueado
     public UsuarioDTO getUsuarioLogueado() {
-        return usuarioLogueado;
+        return logueado;
     }
 
     // Verificar si el usuario ya existe
@@ -135,7 +135,7 @@ public class UsuariosControllers {
         }
     }
 
-    // Método para convertir la contraseña a SHA-256 propio de java
+    // Método para convertir la contraseña a SHA-256 es propio de java
     public String convertirSHA256(String password) {
         MessageDigest md = null;
         try {
