@@ -12,11 +12,13 @@ import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TrabajadoresDAO extends DAO<TrabajadoresDTO> {
 
     public TrabajadoresDAO(Connection connection) {
-        super(DataBase.getInstance().getConnection());
+        super(connection);
     }
 
     @Override
@@ -115,5 +117,12 @@ public class TrabajadoresDAO extends DAO<TrabajadoresDTO> {
             throw e;
         }
     }
-    
+        public boolean validatePK(Object id) {
+        try {
+            return read(id)==null;
+        } catch (SQLException ex) {
+            Logger.getLogger(TrabajadoresDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }

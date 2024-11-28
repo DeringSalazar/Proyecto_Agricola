@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class UsuarioDAO extends DAO<UsuarioDTO>{
 
     public UsuarioDAO(Connection connection) {
-        super(DataBase.getInstance().getConnection());
+        super(connection);
     }
 
     @Override
