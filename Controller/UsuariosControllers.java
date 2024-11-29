@@ -7,19 +7,22 @@ package Controller;
 import Database.DataBase;
 import Model.UsuarioDAO;
 import Model.UsuarioDTO;
+import Model.UsuarioMapper;
+import Model.Usuarios;
 import View.View;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 public class UsuariosControllers {
     private UsuarioDAO dao;
     private final View view;
     private UsuarioDTO logueado;
+    private UsuarioMapper mapper;
 
     public UsuariosControllers(View view) {
         this.view = view;
+        mapper = new UsuarioMapper();
         try {
             Connection connection = DataBase.getInstance().getConnection();
             if (connection == null || connection.isClosed()) {
@@ -36,79 +39,74 @@ public class UsuariosControllers {
     }
 
     
-    public boolean registrarUsuario(String userName, String password, int rol) {
-        if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
-            view.showError("El nombre de usuario y la contraseña son obligatorios");
-            return false;
-        }
-        if (usuarioExiste(userName)) {
-            view.showError("El usuario ya existe.");
-            return false;
-        }
-        try {
-            // Encriptar la contraseña usando SHA-256
-            String hashedPassword = convertirSHA256(password);
-            UsuarioDTO nuevoUsuario = new UsuarioDTO(0, userName, hashedPassword, rol);
-            boolean creado = dao.create(nuevoUsuario);
-            if (creado) {
-                view.showMessage("Usuario registrado con éxito");
-            } else {
-                view.showError("Error al registrar el usuario");
-            }
-            return creado;
-        } catch (SQLException e) {
-            view.showError("Error al registrar usuario: " + e.getMessage());
-            return false;
-        }
-    }
+    public void registrarUsuario(Usuarios usuario) {
+       if (usuario == null || !validateRequired(usuario)) {
+           view.showError("Faltan datos requeridos.");
+           return;
+       }
+       try {
+           if (!validatePK(usuario.getUser_name())) {
+               view.showMessage("El nombre de usuario ingresado ya está registrado.");
+               return;
+           }
+           // Encriptar la contraseña usando SHA-256
+           String hashedPassword = convertirSHA256(usuario.getPassword());
+           usuario.setPassword(hashedPassword);
+
+           // Crear el usuario en la base de datos
+           dao.create(mapper.toDto(usuario));
+           view.showMessage("Usuario registrado correctamente.");
+       } catch (SQLException e) {
+           view.showError("Error al guardar datos: " + e.getMessage());
+       }
+   }
+
+
 
     // Actualizar la contraseña de un usuario
-    public boolean actualizarPassword(String userName, String newPassword) {
-        try {
-            UsuarioDTO usuario = dao.read(userName);
-            if (usuario == null) {
-                view.showError("Usuario no encontrado.");
-                return false;
-            }
-            // Encriptar la nueva contraseña
-            String hashedPassword = convertirSHA256(newPassword);
-            usuario.setPassword(hashedPassword);
-            
-            boolean actualizado = dao.update(usuario);
-            if (actualizado) {
-                view.showSuccess("Contraseña actualizada con éxito.");
-            } else {
-                view.showError("Error al actualizar la contraseña.");
-            }
-            return actualizado;
-        } catch (SQLException e) {
-            view.showError("Error al actualizar la contraseña: " + e.getMessage());
-            return false;
+    public void actualizarPassword(Usuarios user) {
+    try {
+        UsuarioDTO usuario = dao.read(user.getUser_name());
+        if (usuario == null) {
+            view.showError("Usuario no encontrado.");
+            return;
         }
+        // Encriptar la nueva contraseña
+        String hashedPassword = convertirSHA256(user.getPassword());
+        usuario.setPassword(hashedPassword);
+
+        if (dao.update(usuario)) {
+            view.showSuccess("Contraseña actualizada con éxito.");
+        } else {
+            view.showError("Error al actualizar la contraseña.");
+        }
+    } catch (SQLException e) {
+        view.showError("Error al actualizar la contraseña: " + e.getMessage());
     }
+}
 
     // Iniciar sesión
-    public boolean iniciarSesion(String userName, String password) {
-        try {
-            UsuarioDTO usuario = dao.read(userName);
-            if (usuario == null) {
-                view.showError("Usuario no encontrado.");
-                return false;
-            }
-            // Comparar la contraseña encriptada
-            if (usuario.getPassword().equals(convertirSHA256(password))) {
-                logueado = usuario;
-                view.showSuccess("Inicio de sesión exitoso.");
-                return true;
-            } else {
-                view.showError("Contraseña incorrecta.");
-                return false;
-            }
-        } catch (SQLException e) {
-            view.showError("Error al iniciar sesión: " + e.getMessage());
+    public boolean iniciarSesion(Usuarios user) {
+    try {
+        UsuarioDTO usuario = dao.read(user.getUser_name());
+        if (usuario == null) {
+            view.showError("Usuario no encontrado.");
             return false;
         }
+        if (usuario.getPassword().equals(convertirSHA256(user.getPassword()))) {
+            logueado = usuario;
+            view.showSuccess("Inicio de sesión exitoso.");
+            return true;
+        } else {
+            view.showError("Contraseña incorrecta.");
+            return false;
+        }
+    } catch (SQLException e) {
+        view.showError("Error al iniciar sesión: " + e.getMessage());
+        return false;
     }
+}
+
 
     // Cerrar sesión
     public void cerrarSesion() {
@@ -123,16 +121,6 @@ public class UsuariosControllers {
     // Obtener el usuario actualmente logueado
     public UsuarioDTO getUsuarioLogueado() {
         return logueado;
-    }
-
-    // Verificar si el usuario ya existe
-    public boolean usuarioExiste(String userName) {
-        try {
-            return dao.read(userName) != null;
-        } catch (SQLException e) {
-            view.showError("Error al verificar usuario: " + e.getMessage());
-            return false;
-        }
     }
 
     // Método para convertir la contraseña a SHA-256 es propio de java
@@ -154,4 +142,12 @@ public class UsuariosControllers {
             
         return sb.toString();
     }
+    public boolean validatePK(String id) {
+        return dao.validatePK(id);
+    }
+    
+    public boolean validateRequired(Usuarios usuarios) {
+    return usuarios.getUser_name() != null && !usuarios.getUser_name().trim().isEmpty()
+            && usuarios.getPassword() != null && !usuarios.getPassword().trim().isEmpty();
+}
 }

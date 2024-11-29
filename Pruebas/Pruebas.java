@@ -4,6 +4,7 @@
  */
 package Pruebas;
 
+import Controller.ProduccionController;
 import Controller.UsuariosControllers;
 import Model.Trabajador.TrabajadoresDAO;
 import Model.Trabajador.TrabajadoresDTO;
@@ -11,8 +12,15 @@ import Model.UsuarioDAO;
 import Model.UsuarioDTO;
 import java.sql.SQLException;
 import Database.DataBase;
+import Model.Producción.ProduccionDTO;
+import Model.Usuarios;
+import UtilDate.UtilDate;
 import View.View;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -24,39 +32,20 @@ public class Pruebas {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SQLException {
-    DataBase connection = DataBase.getInstance();
-    UsuariosControllers usuariosController = new UsuariosControllers(new ConsoleView()); //Para hacer pruebas
+        ConsoleView view = new ConsoleView();
 
-    try {
-        // Variables de entrada
-        String userName = "50411193"; // Nombre de usuario
-        String oldPassword = "123";   // Contraseña actual
-        String newPassword = "456";   // Nueva contraseña que el usuario quiere establecer
+        // Crear el controlador para manejar la lógica de la producción
+        ProduccionController produccionController = new ProduccionController(view);
 
-        // Intentar iniciar sesión
-        if (usuariosController.iniciarSesion(userName, oldPassword)) {
-            System.out.println("Inicio de sesión exitoso.");
+        // Obtener las producciones desde la base de datos
+        List<ProduccionDTO> producciones = produccionController.getProduccionesFromDB();
 
-            // Mostrar información del usuario logueado
-            UsuarioDTO usuarioLogueado = usuariosController.getUsuarioLogueado();
-            if (usuarioLogueado != null) {
-                System.out.println("Usuario logueado: " + usuarioLogueado.getUser_name());
-                System.out.println("Rol: " + (usuarioLogueado.getRol() == 0 ? "Administrador" : "Trabajador"));
-
-                // Intentar actualizar la contraseña
-                if (usuariosController.actualizarPassword(userName, newPassword)) {
-                    System.out.println("Contraseña actualizada correctamente.");
-                } else {
-                    System.err.println("Error al actualizar la contraseña.");
-                }
-            }
+        // Si se obtienen producciones de la base de datos, generar el reporte XML
+        if (producciones != null && !producciones.isEmpty()) {
+            // Llamar al método para generar el reporte XML
+            produccionController.generarReporteXML(producciones);
         } else {
-            System.err.println("Error: Inicio de sesión fallido. Verifica tus credenciales.");
+            view.showError("No se encontraron producciones para generar el reporte.");
         }
-
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-    }
-    
 }

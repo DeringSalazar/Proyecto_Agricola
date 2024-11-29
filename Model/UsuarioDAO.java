@@ -11,6 +11,8 @@ import java.util.List;
 import Database.DataBase;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.ArrayList;
 
 public class UsuarioDAO extends DAO<UsuarioDTO>{
@@ -85,5 +87,14 @@ public class UsuarioDAO extends DAO<UsuarioDTO>{
             stmt.setString(1, (String) id);
             return stmt.executeUpdate() > 0;
         }
+    }
+    
+    public boolean validatePK(Object id) {
+        try {
+            return read(id)==null;
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }

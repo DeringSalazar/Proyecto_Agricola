@@ -10,10 +10,21 @@ import Model.Producción.ProduccionDTO;
 import Model.Producción.ProduccionMapper;
 import Model.Producción.ProducciónDAO;
 import View.View;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.w3c.dom.*;  // Para trabajar con el DOM (Document Object Model)
+import javax.xml.parsers.*;  // Para crear el documento XML (DocumentBuilderFactory, DocumentBuilder)
+import java.io.*;  // Para trabajar con flujos de entrada/salida (File, FileOutputStream)
+import java.util.List;  // Para usar List
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 
 public class ProduccionController {
     private ProducciónDAO dao;
@@ -89,6 +100,64 @@ public class ProduccionController {
             return dao.validatePK(id);
         } catch (SQLException ex) {
             return false;
+        }
+    }
+    //cambiar metodo ahora en la noche
+    public void generarReporteXML(List<ProduccionDTO> producciones) {
+        try {
+            // Crear un documento XML
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.newDocument();
+
+            // Crear el elemento raíz
+            Element rootElement = document.createElement("Producciones");
+            document.appendChild(rootElement);
+
+            // Iterar sobre la lista de producciones y agregar elementos al XML
+            for (ProduccionDTO produccion : producciones) {
+                // Crear un elemento <Produccion>
+                Element produccionElement = document.createElement("Produccion");
+                rootElement.appendChild(produccionElement);
+
+                // Crear y agregar los elementos hijo para cada atributo
+                addElement(document, produccionElement, "ID", String.valueOf(produccion.getId()));
+                addElement(document, produccionElement, "Fecha", produccion.getFecha().toString());
+                addElement(document, produccionElement, "Calidad", produccion.getCalidad());
+                addElement(document, produccionElement, "Destino", produccion.getDestino());
+                addElement(document, produccionElement, "Cantidad_Recolectada", String.valueOf(produccion.getCantidad_Recolectada()));
+            }
+
+            // Escribir el documento XML a un archivo
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            // Crear el archivo de salida
+            DOMSource source = new DOMSource(document);
+            StreamResult result = new StreamResult(new File("reporte_produccion.xml"));
+
+            // Escribir el archivo
+            transformer.transform(source, result);
+            vista.showMessage("Reporte XML generado correctamente.");
+
+        } catch (Exception e) {
+            vista.showError("Error al generar el reporte XML: " + e.getMessage());
+        }
+    }
+
+    // Método auxiliar para agregar elementos al XML
+    private void addElement(Document document, Element parent, String tagName, String textContent) {
+        Element element = document.createElement(tagName);
+        element.appendChild(document.createTextNode(textContent));
+        parent.appendChild(element);
+    }
+    public List<ProduccionDTO> getProduccionesFromDB() {
+        try {
+            return dao.readAll();  
+        } catch (SQLException e) {
+            vista.showError("Error al obtener producciones desde la base de datos: " + e.getMessage());
+            return null;
         }
     }
 }

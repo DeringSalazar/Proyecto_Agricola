@@ -14,8 +14,8 @@ import Model.Trabajador.TrabajadoresMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -45,8 +45,8 @@ public class TrabajadorController {
         }
     }
     public void insertTrabajador(Trabajadores trabajador){
-        if(trabajador == null || trabajador.getCedula() == null || trabajador.getCedula().isEmpty()){
-            view.showError("Debes insertar la cedula del trabajador");
+        if(trabajador == null || !validateRequired(trabajador)){
+            view.showError("Faltan datos requeridos");
             return;
         }
         try {
@@ -57,74 +57,69 @@ public class TrabajadorController {
             dao.create(mapper.toDto(trabajador));
             view.showMessage("Datos guardados correctamente");
         } catch (SQLException ex) {
-             view.showError("Error al registrar trabajador: " + ex.getMessage());
+             view.showError("Error al guardar datos " + ex.getMessage());
         }
     }
-    public TrabajadoresDTO obtenerTrabajador(String cedula){
-        if(cedula==null || cedula.isEmpty()){
-            view.showError("Ingresa la cedula para buscar un trabajador");
-            return null;
-        }
+    public void read(Object id){
         try {
-            TrabajadoresDTO trabajador = dao.read(cedula);
-            if(trabajador == null){
-                view.showError("Trabajador no encontrado");
+            TrabajadoresDTO trabajadoresDTO = dao.read(id);
+            if (trabajadoresDTO != null) {
+                view.showMessage("Cultivo encontrado: " + trabajadoresDTO);
+            } else {
+                view.showError("Cultivo no encontrado con ID: " + id);
             }
-            return trabajador;
-        } catch (SQLException ex) {
-             view.showError("Error al buscar trabajador: " + ex.getMessage());
-            return null;
+        } catch (SQLException e) {
+            view.showError("Error al buscar el cultivo: " + e.getMessage());
         }
     }
-    public List<TrabajadoresDTO> ObtenerTodosTrabajadores(){
+    public void readAll(){
         try {
-            List<TrabajadoresDTO> list = dao.readAll();
-            if(list.isEmpty()){
-                view.showError("No hay trabajadores registrados en la base de datos");
-            }
-            return list;
+            List<TrabajadoresDTO> dtoList = dao.readAll();
+            List<Trabajadores> cultivosList = dtoList.stream()
+                    .map(mapper::toEntity)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            view.showAll(cultivosList);
         } catch (SQLException ex) {
-            view.showError("Error al obtener trabajadores: " + ex.getMessage());
-            return null;
+            view.showError("Error al cargar los datos: "+ ex.getMessage());
         }
     }
-    public boolean actualizarTrabajador(TrabajadoresDTO trabajador){
-        if(trabajador == null || trabajador.getCedula() == null || trabajador.getCedula().isEmpty()){
-            view.showError("La cedula del trabajador es obligatoria para poder actualizar los datos de un trabajador");
-            return false;
+    public void update(Trabajadores trabajadores){
+        if(trabajadores==null || !validateRequired(trabajadores)) {
+            view.showError("Faltan datos requeridos");
+            return;
         }
         try {
-            boolean trabajadorActualizado = dao.update(trabajador);
-            if(trabajadorActualizado){
-                view.showMessage("Trabajador actualizado con exito");
-            }else{
-                view.showError("Error al actualizar trabajador");
+            if (validatePK(trabajadores.getCedula())){
+                view.showError("La cedula ingresada no se encuentra registrada");
+                return;
             }
-            return trabajadorActualizado;
+            dao.update(mapper.toDto(trabajadores));
         } catch (SQLException ex) {
-             view.showError("Error al actualizar trabajador: " + ex.getMessage());
-            return false;
+            view.showError("Ocurrio un error al actualizar los datos: "+ ex.getMessage());
         }
     }
-    public boolean eliminarTrabajador(String cedula){
-        if(cedula == null || cedula.isEmpty()){
-            view.showError("La cedula es obligatoria para eliminar un trabajador");
-            return false;
-        } 
+    
+    public void delete(Trabajadores trabajadores){
+        if(trabajadores==null || !validateRequired(trabajadores)) {
+            view.showError("No hay ningun cliente cargado actualmente");
+            return;
+        }
         try {
-            boolean eliminadoTrabajador = dao.delete(cedula);
-            if(eliminadoTrabajador){
-                view.showMessage("Se elimino con exito al trabajador");
-            }else{
-                view.showError("Error al eliminar un trabajador");
+            if (validatePK(trabajadores.getCedula())){
+                view.showError("La cedula ingresada no ya se encuentra registrada");
+                return;
             }
-            return eliminadoTrabajador;
+            dao.delete(trabajadores.getCedula());
         } catch (SQLException ex) {
-            view.showError("Error al eliminar trabajador: " + ex.getMessage());
-            return false;
+            view.showError("Ocurrio un error al eliminar los datos: "+ ex.getMessage());
         }
     }
         public boolean validatePK(String id) {
         return dao.validatePK(id);
+    }
+        public boolean validateRequired(Trabajadores trabajadores) {
+        return trabajadores.getCedula() != null &&
+                trabajadores.getNombre() != null;
     }
 }
