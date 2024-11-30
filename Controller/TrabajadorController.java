@@ -7,6 +7,10 @@ package Controller;
 import View.View;
 
 import Database.DataBase;
+import Factory.FactoryProducer;
+import Model.DAO.DAO;
+import Model.DAO.DAOFactory;
+import Model.Mapper.Mapper;
 import Model.Trabajador.Trabajadores;
 import Model.Trabajador.TrabajadoresDAO;
 import Model.Trabajador.TrabajadoresDTO;
@@ -22,25 +26,20 @@ import java.util.stream.Collectors;
  * @author 9567
  */
 public class TrabajadorController {
-    private TrabajadoresDAO dao;
+    private DAO<TrabajadoresDTO> dao;
     private final View view;
-    private final TrabajadoresMapper mapper;
-    
-    
-    public TrabajadorController(View view) throws SQLException{
-        this.view=view;
-        mapper=new TrabajadoresMapper();
-        try{
-            Connection connection = DataBase.getInstance().getConnection();
-            if(connection == null || connection.isClosed()){
-                throw new IllegalStateException("Conexión a la base de datos no válida.");
-            }
-            this.dao = new TrabajadoresDAO(connection);
-        }catch(IllegalStateException e) {
-            view.showError("Error: La conexion a la base de datos: "+e.getMessage());
-            throw new RuntimeException(e);
-        }catch(SQLException e){
-            view.showError("Error al verificar la conexion");
+    private final Mapper<Trabajadores, TrabajadoresDTO> mapper;
+
+    public TrabajadorController(View view) {
+        this.view = view;
+
+        try {
+            // Usamos la FactoryProducer para obtener la fábrica correcta para "Trabajadores"
+            DAOFactory factory = FactoryProducer.getFactory("Trabajadores"); // Indicamos el tipo de entidad
+            this.dao = (DAO<TrabajadoresDTO>) factory.createDAO(DataBase.getInstance().getConnection());
+            this.mapper = (Mapper<Trabajadores, TrabajadoresDTO>) factory.createrMapper();
+        } catch (SQLException e) {
+            view.showError("Error al conectar con la base de datos: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -116,7 +115,7 @@ public class TrabajadorController {
         }
     }
         public boolean validatePK(String id) {
-        return dao.validatePK(id);
+        return ((TrabajadoresDAO) dao).validatePK(id);
     }
         public boolean validateRequired(Trabajadores trabajadores) {
         return trabajadores.getCedula() != null &&

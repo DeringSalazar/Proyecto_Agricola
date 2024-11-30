@@ -5,31 +5,38 @@
 package Controller;
 
 import Database.DataBase;
+import Factory.FactoryProducer;
 import Model.Cultivos.Cultivos;
 import Model.Cultivos.CultivosDAO;
 import Model.Cultivos.CultivosDTO;
 import Model.Cultivos.CultivosMapper;
+import Model.DAO.DAO;
+import Model.DAO.DAOFactory;
+import Model.Mapper.Mapper;
 import View.View;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class CultivosController {
-    private CultivosDAO dao;
-    private View vista;
-    private CultivosMapper mapper;
+    private DAO<CultivosDTO> dao;
+    private Mapper<Cultivos, CultivosDTO> mapper;
+    private final View vista;
 
     public CultivosController(View vista) {
         this.vista = vista;
-        mapper = new CultivosMapper();
+
         try {
-            dao=new CultivosDAO(DataBase.getInstance().getConnection());
-        } catch (IllegalStateException e) {
-            vista.showError("Error: La conexión a la base de datos no está inicializada.");
+            // Usamos FactoryProducer para obtener la fábrica correcta para "Cultivos"
+            DAOFactory factory = FactoryProducer.getFactory("Cultivos"); // Indicamos el tipo de entidad
+            this.dao = (DAO<CultivosDTO>) factory.createDAO(DataBase.getInstance().getConnection());
+            this.mapper = (Mapper<Cultivos, CultivosDTO>) factory.createrMapper();
+        } catch (SQLException e) {
+            vista.showError("Error al conectar con la base de datos: " + e.getMessage());
             throw new RuntimeException(e);
-        } catch (SQLException ex) {
-            vista.showError("Error al conectar con la Base de Datos");
         }
     }
     
@@ -86,9 +93,10 @@ public class CultivosController {
 
     public boolean validatePK(int id) {
         try {
-            return dao.validatePK(id);
+            return ((CultivosDAO) dao).validatePK(id);
         } catch (SQLException ex) {
-            return false;
+            Logger.getLogger(CultivosController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 }

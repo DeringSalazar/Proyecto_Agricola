@@ -4,17 +4,27 @@
  */
 package View.Login;
 
+import Controller.UsuariosControllers;
+import Model.UsuarioDTO;
+import Model.Usuarios;
+import View.Sistema.FrmAdministrador;
+import View.View;
+import java.util.List;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Dering
  */
-public class FrmLoginA extends javax.swing.JFrame {
+public class FrmLoginA extends javax.swing.JFrame implements View{
 
+    private UsuariosControllers controller;
     /**
      * Creates new form FrmLoginA
      */
     public FrmLoginA() {
         initComponents();
+        this.controller = new UsuariosControllers((View) this);
     }
 
     /**
@@ -30,11 +40,11 @@ public class FrmLoginA extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        TxtUser = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        TxtPassword = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnLog = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -53,25 +63,40 @@ public class FrmLoginA extends javax.swing.JFrame {
         jLabel3.setText("Nombre de usuario");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, -1, -1));
 
-        jTextField1.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 220, 340, -1));
+        TxtUser.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        TxtUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TxtUserActionPerformed(evt);
+            }
+        });
+        jPanel1.add(TxtUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 220, 340, -1));
 
         jLabel4.setFont(new java.awt.Font("Serif", 1, 18)); // NOI18N
         jLabel4.setText("Contraseña");
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, -1, -1));
 
-        jTextField2.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, 340, -1));
+        TxtPassword.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        TxtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TxtPasswordActionPerformed(evt);
+            }
+        });
+        jPanel1.add(TxtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, 340, -1));
 
         jLabel5.setFont(new java.awt.Font("Serif", 0, 12)); // NOI18N
         jLabel5.setText("©️Creado y diseñado por DeringSalazar");
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 440, -1, -1));
 
-        jButton1.setBackground(new java.awt.Color(51, 153, 255));
-        jButton1.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Continuar");
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 370, 340, -1));
+        btnLog.setBackground(new java.awt.Color(51, 153, 255));
+        btnLog.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnLog.setForeground(new java.awt.Color(255, 255, 255));
+        btnLog.setText("Continuar");
+        btnLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnLog, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 370, 340, -1));
 
         jCheckBox1.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
         jCheckBox1.setText("Recordarme la contraseña");
@@ -81,6 +106,41 @@ public class FrmLoginA extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void TxtUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtUserActionPerformed
+        
+    }//GEN-LAST:event_TxtUserActionPerformed
+
+    private void TxtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtPasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TxtPasswordActionPerformed
+
+    private void btnLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogActionPerformed
+        String userName = TxtUser.getText().trim();
+        String password = new String(TxtPassword.getText().trim());
+        if(userName.isEmpty() || password.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Por favor pon todos los datos", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Usuarios user = new Usuarios();
+        user.setUser_name(userName);
+        user.setPassword(password);
+        
+        if(controller.iniciarSesion(user)){
+            UsuarioDTO userLog = controller.getUsuarioLogueado();
+            if(userLog.getRol()==0){
+                JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso. Bienvenido, Administrador.", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                FrmAdministrador admin  = new FrmAdministrador();
+                admin.setVisible(true);
+                this.dispose();
+            }else{
+                JOptionPane.showMessageDialog(this, "Acceso denegado. Solo administradores pueden iniciar sesión.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
+        
+        }
+    }//GEN-LAST:event_btnLogActionPerformed
 
     /**
      * @param args the command line arguments
@@ -118,7 +178,9 @@ public class FrmLoginA extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JTextField TxtPassword;
+    private javax.swing.JTextField TxtUser;
+    private javax.swing.JButton btnLog;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -126,7 +188,35 @@ public class FrmLoginA extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void show(Object ent) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showAll(List ents) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void showSuccess(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void showError(String err) {
+        JOptionPane.showMessageDialog(this, err, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public boolean validateRequired() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
