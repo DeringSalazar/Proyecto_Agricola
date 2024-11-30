@@ -5,20 +5,23 @@
 package Controller;
 
 import Database.DataBase;
+import Factory.FactoryProducer;
+import Model.DAO.DAO;
+import Model.DAO.DAOFactory;
+import Model.Mapper.Mapper;
 import Model.Producción.Produccion;
 import Model.Producción.ProduccionDTO;
-import Model.Producción.ProduccionMapper;
 import Model.Producción.ProducciónDAO;
 import View.View;
 import java.io.File;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.w3c.dom.*;  // Para trabajar con el DOM (Document Object Model)
-import javax.xml.parsers.*;  // Para crear el documento XML (DocumentBuilderFactory, DocumentBuilder)
-import java.io.*;  // Para trabajar con flujos de entrada/salida (File, FileOutputStream)
+import javax.xml.parsers.*;  // Para crear el documento XML (DocumentBuilderFactory, DocumentBuilder)   
 import java.util.List;  // Para usar List
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -27,20 +30,20 @@ import javax.xml.transform.stream.StreamResult;
 
 
 public class ProduccionController {
-    private ProducciónDAO dao;
+    private DAO<ProduccionDTO> dao;
     private View vista;
-    private ProduccionMapper mapper;
-
+    private Mapper<Produccion, ProduccionDTO> mapper;
+    
     public ProduccionController(View vista) {
         this.vista = vista;
-        mapper = new ProduccionMapper();
         try {
-            dao=new ProducciónDAO(DataBase.getInstance().getConnection());
-        } catch (IllegalStateException e) {
-            vista.showError("Error: La conexión a la base de datos no está inicializada.");
+            // Usamos FactoryProducer para obtener la fábrica correcta para "Cultivos"
+            DAOFactory factory = FactoryProducer.getFactory("Produccion"); // Indicamos el tipo de entidad
+            this.dao = (DAO<ProduccionDTO>) factory.createDAO(DataBase.getInstance().getConnection());
+            this.mapper = (Mapper<Produccion, ProduccionDTO>) factory.createrMapper();
+        } catch (SQLException e) {
+            vista.showError("Error al conectar con la base de datos: " + e.getMessage());
             throw new RuntimeException(e);
-        } catch (SQLException ex) {
-            vista.showError("Error al conectar con la Base de Datos");
         }
     }
     
@@ -92,15 +95,16 @@ public class ProduccionController {
                 produccion.getFecha() != null &&
                 !produccion.getCalidad().trim().isEmpty()&&
                 !produccion.getDestino().trim().isEmpty() &&
-                produccion.getCantidad_Recolectada() != 0;
+                !produccion.getCantidad_Recolectada().trim().isEmpty();
     }
 
     public boolean validatePK(int id) {
         try {
-            return dao.validatePK(id);
+            return ((ProducciónDAO) dao).validatePK(id);
         } catch (SQLException ex) {
-            return false;
+            Logger.getLogger(CultivosController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
     //cambiar metodo ahora en la noche
     public void generarReporteXML(List<ProduccionDTO> producciones) {

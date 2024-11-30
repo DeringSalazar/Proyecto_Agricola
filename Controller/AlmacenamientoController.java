@@ -5,31 +5,36 @@
 package Controller;
 
 import Database.DataBase;
+import Factory.FactoryProducer;
 import Model.Almacenamiento.Almacenamiento;
 import Model.Almacenamiento.AlmacenamientoDAO;
 import Model.Almacenamiento.AlmacenamientoDTO;
-import Model.Almacenamiento.AlmacenamientoMapper;
+import Model.DAO.DAO;
+import Model.DAO.DAOFactory;
+import Model.Mapper.Mapper;
 import View.View;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class AlmacenamientoController {
-    private AlmacenamientoDAO dao;
+    private DAO<AlmacenamientoDTO> dao;
     private View vista;
-    private AlmacenamientoMapper mapper;
+    private Mapper<Almacenamiento, AlmacenamientoDTO> mapper;
 
     public AlmacenamientoController(View vista) {
         this.vista = vista;
-        mapper = new AlmacenamientoMapper();
         try {
-            dao=new AlmacenamientoDAO(DataBase.getInstance().getConnection());
-        } catch (IllegalStateException e) {
-            vista.showError("Error: La conexión a la base de datos no está inicializada.");
+            // Usamos FactoryProducer para obtener la fábrica correcta para "Cultivos"
+            DAOFactory factory = FactoryProducer.getFactory("Produccion"); // Indicamos el tipo de entidad
+            this.dao = (DAO<AlmacenamientoDTO>) factory.createDAO(DataBase.getInstance().getConnection());
+            this.mapper = (Mapper<Almacenamiento, AlmacenamientoDTO>) factory.createrMapper();
+        } catch (SQLException e) {
+            vista.showError("Error al conectar con la base de datos: " + e.getMessage());
             throw new RuntimeException(e);
-        } catch (SQLException ex) {
-            vista.showError("Error al conectar con la Base de Datos");
         }
     }
     
@@ -83,9 +88,10 @@ public class AlmacenamientoController {
 
     public boolean validatePK(int id) {
         try {
-            return dao.validatePK(id);
+            return ((AlmacenamientoDAO) dao).validatePK(id);
         } catch (SQLException ex) {
-            return false;
+            Logger.getLogger(CultivosController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 }

@@ -28,7 +28,6 @@ public class CultivosController {
 
     public CultivosController(View vista) {
         this.vista = vista;
-
         try {
             // Usamos FactoryProducer para obtener la fábrica correcta para "Cultivos"
             DAOFactory factory = FactoryProducer.getFactory("Cultivos"); // Indicamos el tipo de entidad
