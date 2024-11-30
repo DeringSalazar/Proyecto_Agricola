@@ -8,13 +8,18 @@ import java.sql.Date;
 
 public class ProduccionDTO {
     private int id; 
+    private int idCultivo;
     private Date fecha;
     private String calidad;
     private String destino;
-    private int cantidad_Recolectada;
+    private String cantidad_Recolectada;
 
     public int getId() {
         return id;
+    }
+
+    public int getIdCultivo() {
+        return idCultivo;
     }
 
     public Date getFecha() {
@@ -29,12 +34,13 @@ public class ProduccionDTO {
         return destino;
     }
 
-    public int getCantidad_Recolectada() {
+    public String getCantidad_Recolectada() {
         return cantidad_Recolectada;
     }
-    
-    public ProduccionDTO(int id, Date fecha, String calidad, String destino, int cantidad_Recolectada) {
+
+    public ProduccionDTO(int id, int idCultivo, Date fecha, String calidad, String destino, String cantidad_Recolectada) {
         this.id = id;
+        this.idCultivo = idCultivo;
         this.fecha = fecha;
         this.calidad = calidad;
         this.destino = destino;

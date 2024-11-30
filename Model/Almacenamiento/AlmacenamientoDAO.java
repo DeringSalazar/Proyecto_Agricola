@@ -18,10 +18,10 @@ public class AlmacenamientoDAO extends DAO<AlmacenamientoDTO>{
 
     @Override
     public boolean create(AlmacenamientoDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call InsertarAlmacenamiento(?,?)");
-        stmt.setInt(1, dto.getCantidad());
-        stmt.setDate(2, dto.getFecha_Ingreso());
-        stmt.setDate(3, dto.getFecha_Retiro());
+        stmt = connection.prepareStatement("call InsertarAlmacenamiento(?,?,?)");
+        stmt.setInt(1, dto.getIdProducción());
+        stmt.setInt(2, dto.getCantidad());
+        stmt.setDate(3, dto.getFecha_Ingreso());
         return stmt.executeUpdate()>0;
     }
 
@@ -32,9 +32,11 @@ public class AlmacenamientoDAO extends DAO<AlmacenamientoDTO>{
         rs = stmt.executeQuery();
         if(rs.next()){
             return new AlmacenamientoDTO(
-                    rs.getInt(1), 
-                    rs.getDate(3),
-                    rs.getDate(3)
+                    rs.getInt(1),
+                    rs.getInt(2),
+                    rs.getInt(3), 
+                    rs.getDate(4),
+                    rs.getDate(5)
             );
         }
         return null;
@@ -47,9 +49,11 @@ public class AlmacenamientoDAO extends DAO<AlmacenamientoDTO>{
         List<AlmacenamientoDTO> dtos = new ArrayList();
         while(rs.next()){
             dtos.add(new AlmacenamientoDTO(
-                    rs.getInt(1), 
-                    rs.getDate(3),
-                    rs.getDate(3)
+                    rs.getInt(1),
+                    rs.getInt(2),
+                    rs.getInt(3), 
+                    rs.getDate(4),
+                    rs.getDate(5)
             ));
         }
         return dtos;
@@ -57,15 +61,15 @@ public class AlmacenamientoDAO extends DAO<AlmacenamientoDTO>{
 
     @Override
     public boolean update(AlmacenamientoDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call AlmacenamientoUpdate(?,?)");
-        stmt.setInt(1, dto.getCantidad());
-        stmt.setDate(2, dto.getFecha_Ingreso());
+        stmt = connection.prepareStatement("call UpdateAlmacenamiento(?,?)");
+        stmt.setInt(1, dto.getId());
+        stmt.setDate(2, dto.getFecha_Retiro());
         return stmt.executeUpdate()>0;
     }
 
     @Override
     public boolean delete(Object id) throws SQLException {
-        stmt = connection.prepareStatement("call AlmacenamientoDelete(?)");
+        stmt = connection.prepareStatement("call DeleteAlmacenamiento(?)");
         stmt.setString(1, String.valueOf(id));
         return stmt.executeUpdate()>0;
     }

@@ -4,10 +4,12 @@
  */
 package Model.Cultivos;
 
+import Model.Trabajador.Trabajadores;
 import java.time.LocalDate;
 
 public class Cultivos {
     private int id;
+    private Trabajadores cedula;
     private String nombre;
     private String tipo;
     private double area_Sembrada;
@@ -17,6 +19,10 @@ public class Cultivos {
 
     public int getId() {
         return id;
+    }  
+
+    public Trabajadores getCedula() {
+        return cedula;
     }
 
     public String getNombre() {
@@ -63,8 +69,9 @@ public class Cultivos {
         this.fecha_cosecha = fecha_cosecha;
     }
 
-    public Cultivos(int id, String nombre, String tipo, double area_Sembrada, String estado_Crecimiento, LocalDate fecha_Siembra, LocalDate fecha_cosecha) {
+    public Cultivos(int id, Trabajadores cedula, String nombre, String tipo, double area_Sembrada, String estado_Crecimiento, LocalDate fecha_Siembra, LocalDate fecha_cosecha) {
         this.id = id;
+        this.cedula = cedula;
         this.nombre = nombre;
         this.tipo = tipo;
         this.area_Sembrada = area_Sembrada;
@@ -74,7 +81,7 @@ public class Cultivos {
     }
 
     public Cultivos() {
-        this(0, "", "", 0.0, "", LocalDate.now(), LocalDate.now());
+        this(0, new Trabajadores(), "", "", 0.0, "", LocalDate.now(), LocalDate.now());
     }
     
     @Override

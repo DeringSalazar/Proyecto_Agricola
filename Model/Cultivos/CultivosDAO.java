@@ -20,12 +20,13 @@ public class CultivosDAO extends DAO<CultivosDTO>{
     public boolean create(CultivosDTO dto) throws SQLException {
         stmt = connection.prepareStatement("call InsertarCultivos(?, ?, ?, ?, ?, ?, ?)");
             stmt.setInt(1, dto.getId());
-            stmt.setString(2, dto.getNombre());
-            stmt.setString(3, dto.getTipo());
-            stmt.setDouble(4, dto.getArea_Sembrada());
-            stmt.setString(5, dto.getEstado_Crecimiento());
-            stmt.setDate(6, dto.getFecha_Siembra());
-            stmt.setDate(7, dto.getFecha_cosecha());
+            stmt.setString(2, dto.getCedula());
+            stmt.setString(3, dto.getNombre());
+            stmt.setString(4, dto.getTipo());
+            stmt.setDouble(5, dto.getArea_Sembrada());
+            stmt.setString(6, dto.getEstado_Crecimiento());
+            stmt.setDate(7, dto.getFecha_Siembra());
+            stmt.setDate(8, dto.getFecha_cosecha());
             return stmt.executeUpdate()>0;
     }
 
@@ -37,12 +38,13 @@ public class CultivosDAO extends DAO<CultivosDTO>{
         if (rs.next()) {
             return new CultivosDTO(
             rs.getInt(1),
-            rs.getString(2),
+         rs.getString(2),
             rs.getString(3),
-            rs.getDouble(4),
-            rs.getString(5),
-            rs.getDate(6),
-            rs.getDate(7)
+            rs.getString(4),
+            rs.getDouble(5),
+            rs.getString(6),
+            rs.getDate(7),
+            rs.getDate(8)
                     );
                 }
         return null;
@@ -56,12 +58,13 @@ public class CultivosDAO extends DAO<CultivosDTO>{
         while(rs.next()){
             dtos.add(new CultivosDTO(
                     rs.getInt(1),
-                 rs.getString(2),
-                   rs.getString(3),
-            rs.getDouble(4),
-            rs.getString(5),
-            rs.getDate(6),
-            rs.getDate(7)
+                    rs.getString(2),
+                 rs.getString(3),
+                   rs.getString(4),
+            rs.getDouble(5),
+            rs.getString(6),
+            rs.getDate(7),
+            rs.getDate(8)
             ));
         }
         return dtos;
@@ -69,13 +72,10 @@ public class CultivosDAO extends DAO<CultivosDTO>{
 
     @Override
     public boolean update(CultivosDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call CultivoUpdate(?, ?, ?, ?, ?, ?)");
+        stmt = connection.prepareStatement("call CultivoUpdate(?, ?, ?)");
         stmt.setInt(1, dto.getId());
-        stmt.setString(2, dto.getTipo());
-        stmt.setDouble(3, dto.getArea_Sembrada());
-        stmt.setString(4, dto.getEstado_Crecimiento());
-        stmt.setDate(5, dto.getFecha_Siembra());
-        stmt.setDate(6, dto.getFecha_cosecha());
+        stmt.setString(2, dto.getCedula());
+        stmt.setDate(3, dto.getFecha_cosecha());
         return stmt.executeUpdate()>0;
     }
 

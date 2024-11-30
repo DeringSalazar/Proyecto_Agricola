@@ -18,12 +18,13 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public boolean create(ProduccionDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call InsertarProduccion(?,?,?,?)");
-        stmt.setInt(1, dto.getId());
+        stmt = connection.prepareStatement("call InsertarProduccion(?,?,?,?,?)");
+        stmt.setInt(1, dto.getIdCultivo());
         stmt.setDate(2, dto.getFecha());
-        stmt.setString(3, dto.getCalidad());
-        stmt.setString(4, dto.getDestino());
-        stmt.setInt(5, dto.getCantidad_Recolectada());
+        stmt.setString(3, dto.getCantidad_Recolectada());
+        stmt.setString(4, dto.getCalidad());
+        stmt.setString(5, dto.getDestino());
+        
         return stmt.executeUpdate()>0;
     }
 
@@ -35,10 +36,11 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
         if(rs.next()){
             return new ProduccionDTO(
                     rs.getInt(1), 
-                    rs.getDate(2), 
-                    rs.getString(3),
+                    rs.getInt(2),
+                    rs.getDate(3), 
                     rs.getString(4),
-                    rs.getInt(5)
+                    rs.getString(5),
+                    rs.getString(6)
             );
         }
         return null;
@@ -52,10 +54,11 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
         while(rs.next()){
             dtos.add(new ProduccionDTO(
                     rs.getInt(1), 
-                    rs.getDate(2), 
-                    rs.getString(3),
+                    rs.getInt(2),
+                    rs.getDate(3), 
                     rs.getString(4),
-                    rs.getInt(5)
+                    rs.getString(5),
+                    rs.getString(6)
             ));
         }
         return dtos;
@@ -65,8 +68,9 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
     public boolean update(ProduccionDTO dto) throws SQLException {
         stmt = connection.prepareStatement("call CustomerUpdate(?,?,?)");
         stmt.setInt(1, dto.getId());
-        stmt.setString(2, dto.getDestino());
-        stmt.setInt(3, dto.getCantidad_Recolectada());
+        stmt.setString(2, dto.getCantidad_Recolectada());
+        stmt.setString(3, dto.getDestino());
+        
         return stmt.executeUpdate()>0;
     }
 

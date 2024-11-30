@@ -4,12 +4,31 @@
  */
 package Model.Almacenamiento;
 
+import Model.Producción.Produccion;
 import java.time.LocalDate;
 
 public class Almacenamiento {
+    private int id;
+    private Produccion idProducción;
     private int cantidad;
     private LocalDate fecha_Ingreso;
     private LocalDate fecha_Retiro;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setFecha_Retiro(LocalDate fecha_Retiro) {
+        this.fecha_Retiro = fecha_Retiro;
+    }
+
+    public Produccion getIdProducción() {
+        return idProducción;
+    }
 
     public int getCantidad() {
         return cantidad;
@@ -23,21 +42,16 @@ public class Almacenamiento {
         return fecha_Retiro;
     }
 
-    public void setCantidad(int cantidad) {
+    public Almacenamiento(int id, Produccion idProducción, int cantidad, LocalDate fecha_Ingreso, LocalDate fecha_Retiro) {
+        this.id = id;
+        this.idProducción = idProducción;
         this.cantidad = cantidad;
-    }
-
-    public void setFecha_Ingreso(LocalDate fecha_Ingeso) {
-        this.fecha_Ingreso = fecha_Ingeso;
-    }
-
-    public Almacenamiento(int cantidad, LocalDate fecha_Ingeso, LocalDate fecha_Retiro) {
-        this.cantidad = cantidad;
-        this.fecha_Ingreso = fecha_Ingeso;
+        this.fecha_Ingreso = fecha_Ingreso;
         this.fecha_Retiro = fecha_Retiro;
     }
+    
 
     public Almacenamiento() {
-        this(0, LocalDate.now(), LocalDate.now());
+        this(0, new Produccion(), 0, LocalDate.now(), LocalDate.now());
     }
 }

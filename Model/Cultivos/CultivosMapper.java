@@ -4,8 +4,14 @@
  */
 package Model.Cultivos;
 
+import Database.DataBase;
 import Model.Mapper.Mapper;
+import Model.Trabajador.TrabajadoresDAO;
+import Model.Trabajador.TrabajadoresMapper;
 import UtilDate.UtilDate;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CultivosMapper implements Mapper<Cultivos, CultivosDTO>{
 
@@ -14,6 +20,7 @@ public class CultivosMapper implements Mapper<Cultivos, CultivosDTO>{
         if(ent == null) return null;
         return new CultivosDTO(
                 ent.getId(),
+                ent.getCedula().getCedula(),
                 ent.getNombre(),
                 ent.getTipo(),
                 ent.getArea_Sembrada(),
@@ -25,16 +32,22 @@ public class CultivosMapper implements Mapper<Cultivos, CultivosDTO>{
 
     @Override
     public Cultivos toEntity(CultivosDTO dto) {
-        if(dto == null) return null;
-       return new Cultivos(
-               dto.getId(),
-               dto.getNombre(),
-               dto.getTipo(),
-               dto.getArea_Sembrada(),
-               dto.getEstado_Crecimiento(),
-               UtilDate.toLocalDate(dto.getFecha_Siembra()),
-               UtilDate.toLocalDate(dto.getFecha_cosecha())
-       );
+        try {
+            if(dto == null) return null;
+            return new Cultivos(
+                    dto.getId(),
+                    new TrabajadoresMapper().toEntity(new TrabajadoresDAO(DataBase.getInstance().getConnection()).read(dto.getCedula())),
+                    dto.getNombre(),
+                    dto.getTipo(),
+                    dto.getArea_Sembrada(),
+                    dto.getEstado_Crecimiento(),
+                    UtilDate.toLocalDate(dto.getFecha_Siembra()),
+                    UtilDate.toLocalDate(dto.getFecha_cosecha())
+            );
+        } catch (SQLException ex) {
+            Logger.getLogger(CultivosMapper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
 }

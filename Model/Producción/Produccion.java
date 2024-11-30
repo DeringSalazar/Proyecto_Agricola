@@ -4,17 +4,23 @@
  */
 package Model.Producción;
 
+import Model.Cultivos.Cultivos;
 import java.time.LocalDate;
 
 public class Produccion {
     private int id; 
+    private Cultivos idCultivo;
     private LocalDate fecha;
     private String calidad;
     private String destino;
-    private int cantidad_Recolectada;
+    private String cantidad_Recolectada;
 
     public int getId() {
         return id;
+    }
+
+    public Cultivos getIdCultivo() {
+        return idCultivo;
     }
 
     public LocalDate getFecha() {
@@ -29,7 +35,7 @@ public class Produccion {
         return destino;
     }
 
-    public int getCantidad_Recolectada() {
+    public String getCantidad_Recolectada() {
         return cantidad_Recolectada;
     }
 
@@ -37,12 +43,13 @@ public class Produccion {
         this.destino = destino;
     }
 
-    public void setCantidad_Recolectada(int cantidad_Recolectada) {
+    public void setCantidad_Recolectada(String cantidad_Recolectada) {
         this.cantidad_Recolectada = cantidad_Recolectada;
     }
 
-    public Produccion(int id, LocalDate fecha, String calidad, String destino, int cantidad_Recolectada) {
+    public Produccion(int id, Cultivos idCultivo, LocalDate fecha, String calidad, String destino, String cantidad_Recolectada) {
         this.id = id;
+        this.idCultivo = idCultivo;
         this.fecha = fecha;
         this.calidad = calidad;
         this.destino = destino;
@@ -50,6 +57,6 @@ public class Produccion {
     }
 
     public Produccion() {
-        this(0, LocalDate.now(), "", "", 0);
+        this(0, new Cultivos(), LocalDate.now(), "", "", "");
     }
 }
