@@ -4,37 +4,36 @@
  */
 package Controller;
 
+
 import Database.DataBase;
+import Factory.FactoryProducer;
+import Model.DAO.DAO;
+import Model.DAO.DAOFactory;
+import Model.Mapper.Mapper;
 import Model.UsuarioDAO;
 import Model.UsuarioDTO;
-import Model.UsuarioMapper;
 import Model.Usuarios;
 import View.View;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
+
 public class UsuariosControllers {
-    private UsuarioDAO dao;
-    private final View view;
+    
+    private DAO<UsuarioDTO> dao;
+    private Mapper<Usuarios, UsuarioDTO> mapper;
+    private View view;
     private UsuarioDTO logueado;
-    private UsuarioMapper mapper;
 
     public UsuariosControllers(View view) {
         this.view = view;
-        mapper = new UsuarioMapper();
         try {
-            Connection connection = DataBase.getInstance().getConnection();
-            if (connection == null || connection.isClosed()) {
-                throw new IllegalStateException("Conexión a la base de datos no válida.");
-            }
-            this.dao = new UsuarioDAO(connection);
-        } catch (IllegalStateException e) {
-            view.showError("Error: La conexión a la base de datos no está inicializada.");
-            throw new RuntimeException(e);
+            // Usamos la FactoryProducer para obtener la fábrica correcta para "Usuario"
+            DAOFactory factory = FactoryProducer.getFactory("Usuario"); // Aquí pasas el tipo de entidad, en este caso "Usuario"
+            dao = (DAO<UsuarioDTO>) factory.createDAO(DataBase.getInstance().getConnection()); // Usamos la fábrica para crear el DAO
+            mapper = (Mapper<Usuarios, UsuarioDTO>) factory.createrMapper(); 
         } catch (SQLException e) {
-            view.showError("Error al verificar la conexión: " + e.getMessage());
-            throw new RuntimeException(e);
+            view.showError("Error al conectar con la base de datos: " + e.getMessage());
         }
     }
 
@@ -64,26 +63,30 @@ public class UsuariosControllers {
 
 
     // Actualizar la contraseña de un usuario
-    public void actualizarPassword(Usuarios user) {
-    try {
-        UsuarioDTO usuario = dao.read(user.getUser_name());
-        if (usuario == null) {
-            view.showError("Usuario no encontrado.");
+    public void actualizarUsuario(Usuarios user) {
+        if (user == null || !validateRequired(user)) {
+            view.showError("Faltan datos requeridos");
             return;
         }
-        // Encriptar la nueva contraseña
-        String hashedPassword = convertirSHA256(user.getPassword());
-        usuario.setPassword(hashedPassword);
+        try {
+            if (validatePK(user.getUser_name())) {
+                view.showError("El usuario ingresado no se encuentra registrado");
+                return;
+            }
+            // Encriptar la contraseña antes de actualizar
+            String hashedPassword = convertirSHA256(user.getPassword());
+            user.setPassword(hashedPassword);
 
-        if (dao.update(usuario)) {
-            view.showSuccess("Contraseña actualizada con éxito.");
-        } else {
-            view.showError("Error al actualizar la contraseña.");
+            // Convertir a DTO y actualizar
+            dao.update(mapper.toDto(user));
+            view.showSuccess("Usuario actualizado con éxito.");
+        } catch (SQLException ex) {
+            view.showError("Ocurrió un error al actualizar los datos: " + ex.getMessage());
         }
-    } catch (SQLException e) {
-        view.showError("Error al actualizar la contraseña: " + e.getMessage());
     }
-}
+
+
+
 
     // Iniciar sesión
     public boolean iniciarSesion(Usuarios user) {
@@ -143,11 +146,12 @@ public class UsuariosControllers {
         return sb.toString();
     }
     public boolean validatePK(String id) {
-        return dao.validatePK(id);
-    }
+        return ((UsuarioDAO) dao).validatePK(id);
+}
+
     
     public boolean validateRequired(Usuarios usuarios) {
     return usuarios.getUser_name() != null && !usuarios.getUser_name().trim().isEmpty()
             && usuarios.getPassword() != null && !usuarios.getPassword().trim().isEmpty();
-}
+    }
 }
