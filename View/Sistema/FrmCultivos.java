@@ -8,6 +8,8 @@ import Controller.CultivosController;
 import Controller.TrabajadorController;
 import Model.Cultivos.Cultivos;
 import Model.Trabajador.Trabajadores;
+import View.View;
+import java.awt.HeadlessException;
 import java.time.LocalDate;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
@@ -20,6 +22,7 @@ public class FrmCultivos extends javax.swing.JFrame {
     private TrabajadorController trabajador;
     private Trabajadores trabajadores;
     private Cultivos cultivos;
+    private View vista;
     private DefaultTableModel tablemodel;
     TableRowSorter<TableModel> sorter;
     
@@ -28,7 +31,7 @@ public class FrmCultivos extends javax.swing.JFrame {
      */
     public FrmCultivos() {
         initComponents();
-        controller = new CultivosController(this, trabajador);
+        controller = new CultivosController(vista, trabajador);
         this.setLocationRelativeTo(this);
         tablemodel = (DefaultTableModel) TxtDatos.getModel();
         sorter = new TableRowSorter<>(this.TxtDatos.getModel());
@@ -304,13 +307,13 @@ public class FrmCultivos extends javax.swing.JFrame {
         if(!TxtCodigo.isEditable()) return;
         int id = Integer.parseInt(TxtCodigo.getText());
         if (!controller.validatePK(id)){
-            showError("La cedula ingresada ya se encuentra registrada");
+            vista.showError("La cedula ingresada ya se encuentra registrada");
             TxtCodigo.setText("");
         }
     }//GEN-LAST:event_TxtCodigoActionPerformed
 
     private void AgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarActionPerformed
-         if (!validateRequired()) {
+         if (!controller.validateRequired(cultivos)) {
         JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
@@ -322,7 +325,7 @@ public class FrmCultivos extends javax.swing.JFrame {
         
         // Asegúrate de inicializar correctamente el objeto Trabajadores
         Trabajadores cedula = new Trabajadores();
-        cedula.setCedula(TxtCedula.getText().trim()); // Asegúrate de que este método exista y funcione
+        cedula.setCedula(TxtCed.getText().trim()); // Asegúrate de que este método exista y funcione
         
         cultivos = new Cultivos(
             codigo,
@@ -336,13 +339,13 @@ public class FrmCultivos extends javax.swing.JFrame {
         
         controller.insertar(cultivos);
         clear();
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "Error al insertar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_AgregarActionPerformed
 
     private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActualizarActionPerformed
-        if (!validateRequired()) {
+        if (!controller.validateRequired(cultivos)) {
         JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
@@ -366,8 +369,6 @@ public class FrmCultivos extends javax.swing.JFrame {
         // Actualizar la tabla con los nuevos datos
         controller.readAll();
     } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "El salario debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
-    } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Error al actualizar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_ActualizarActionPerformed
@@ -389,7 +390,7 @@ public class FrmCultivos extends javax.swing.JFrame {
         clear();
         controller.readAll();
         JOptionPane.showMessageDialog(this, "Trabajador eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    } catch (Exception e) {
+    } catch (HeadlessException e) {
         JOptionPane.showMessageDialog(this, "Error al eliminar el trabajador: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_EliminarActionPerformed
@@ -407,6 +408,16 @@ public class FrmCultivos extends javax.swing.JFrame {
         controller.readAll();
     }//GEN-LAST:event_jButton12ActionPerformed
 
+    private void clear() {
+        TxtCodigo.setText("");
+        TxtCed.setText("");
+        TxtNom.setText("");
+        TxtAre.setText("");
+        Txtip.setText("");
+        TxtEst.setText("");
+        TxtSiem.setText("");
+    }
+    
     /**
      * @param args the command line arguments
      */

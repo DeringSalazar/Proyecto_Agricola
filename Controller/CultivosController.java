@@ -9,14 +9,11 @@ import Factory.FactoryProducer;
 import Model.Cultivos.Cultivos;
 import Model.Cultivos.CultivosDAO;
 import Model.Cultivos.CultivosDTO;
-import Model.Cultivos.CultivosMapper;
 import Model.DAO.DAO;
 import Model.DAO.DAOFactory;
 import Model.Mapper.Mapper;
 import Model.Trabajador.Trabajadores;
-import Model.Trabajador.TrabajadoresDAO;
 import Model.Trabajador.TrabajadoresDTO;
-import Model.Trabajador.TrabajadoresMapper;
 import View.View;
 import java.sql.SQLException;
 import java.util.List;
@@ -140,10 +137,8 @@ public class CultivosController {
 
      
     public boolean validateRequired(Cultivos cultivo) {
-        return cultivo.getId() != 0 &&
-                !cultivo.getNombre().trim().isEmpty()&&
+        return  !cultivo.getNombre().trim().isEmpty()&&
                 !cultivo.getTipo().trim().isEmpty()&&
-                cultivo.getArea_Sembrada() != 0.0 &&
                 !cultivo.getEstado_Crecimiento().trim().isEmpty();
     }
 
