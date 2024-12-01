@@ -50,7 +50,7 @@ public class TrabajadorController {
         }
         try {
             if(!validatePK(trabajador.getCedula())){
-                view.showMessage("La cedula ingresa ya esta registrada");
+                view.showError("La cedula ingresa ya esta registrada");
                 return;
             }
             dao.create(mapper.toDto(trabajador));

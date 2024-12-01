@@ -129,7 +129,7 @@ public class FrmLoginA extends javax.swing.JFrame implements View{
         if(controller.iniciarSesion(user)){
             UsuarioDTO userLog = controller.getUsuarioLogueado();
             if(userLog.getRol()==0){
-                JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso. Bienvenido, Administrador.", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso. Bienvenido, " + userLog.getUser_name() + ".", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 FrmAdministrador admin  = new FrmAdministrador();
                 admin.setVisible(true);
                 this.dispose();
@@ -212,7 +212,7 @@ public class FrmLoginA extends javax.swing.JFrame implements View{
 
     @Override
     public void showError(String err) {
-        JOptionPane.showMessageDialog(this, err, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, err, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     @Override
