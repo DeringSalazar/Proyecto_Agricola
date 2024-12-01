@@ -7,7 +7,7 @@ package View.Login;
 import Controller.UsuariosControllers;
 import Model.UsuarioDTO;
 import Model.Usuarios;
-import View.Sistema.FrmTrabajador;
+import View.FrmMenuCPA;
 import View.View;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -112,7 +112,7 @@ public class FrmLoginT extends javax.swing.JFrame implements View{
             UsuarioDTO userLog = controller.getUsuarioLogueado();
             if(userLog.getRol()==1){
                 JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso. Bienvenido, " + userLog.getUser_name() + ".", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                FrmTrabajador admin  = new FrmTrabajador();
+                FrmMenuCPA admin  = new FrmMenuCPA();
                 admin.setVisible(true);
                 this.dispose();
             }else{
