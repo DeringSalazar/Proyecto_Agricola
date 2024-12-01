@@ -46,20 +46,20 @@ public class FrmTrabajador extends javax.swing.JFrame {
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
-        jTextField13 = new javax.swing.JTextField();
-        jTextField14 = new javax.swing.JTextField();
+        TxtCodigoCultivo = new javax.swing.JTextField();
+        TxtNombreCultivo = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
-        jTextField15 = new javax.swing.JTextField();
+        TxtSiembra = new javax.swing.JTextField();
         jLabel21 = new javax.swing.JLabel();
-        jTextField16 = new javax.swing.JTextField();
+        TxtTipo = new javax.swing.JTextField();
         jLabel22 = new javax.swing.JLabel();
-        jButton13 = new javax.swing.JButton();
-        jButton14 = new javax.swing.JButton();
-        jButton15 = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnAgregar = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
         jButton16 = new javax.swing.JButton();
         jLabel23 = new javax.swing.JLabel();
-        jTextField17 = new javax.swing.JTextField();
-        jTextField19 = new javax.swing.JTextField();
+        TxtArea = new javax.swing.JTextField();
+        TxtEstado = new javax.swing.JTextField();
         jPanel11 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         TxtDatos2 = new javax.swing.JTable();
@@ -220,59 +220,64 @@ public class FrmTrabajador extends javax.swing.JFrame {
         jLabel19.setText("Tipo:");
         jPanel10.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
 
-        jTextField13.addActionListener(new java.awt.event.ActionListener() {
+        TxtCodigoCultivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField13ActionPerformed(evt);
+                TxtCodigoCultivoActionPerformed(evt);
             }
         });
-        jPanel10.add(jTextField13, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 10, 310, -1));
+        jPanel10.add(TxtCodigoCultivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 10, 310, -1));
 
-        jTextField14.addActionListener(new java.awt.event.ActionListener() {
+        TxtNombreCultivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField14ActionPerformed(evt);
+                TxtNombreCultivoActionPerformed(evt);
             }
         });
-        jPanel10.add(jTextField14, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 50, 310, -1));
+        jPanel10.add(TxtNombreCultivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 50, 310, -1));
 
         jLabel20.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel20.setText("Estado:");
         jPanel10.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, -1));
 
-        jTextField15.addActionListener(new java.awt.event.ActionListener() {
+        TxtSiembra.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField15ActionPerformed(evt);
+                TxtSiembraActionPerformed(evt);
             }
         });
-        jPanel10.add(jTextField15, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, 310, -1));
+        jPanel10.add(TxtSiembra, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, 310, -1));
 
         jLabel21.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel21.setText("Siembra:");
         jPanel10.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, -1, -1));
 
-        jTextField16.addActionListener(new java.awt.event.ActionListener() {
+        TxtTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField16ActionPerformed(evt);
+                TxtTipoActionPerformed(evt);
             }
         });
-        jPanel10.add(jTextField16, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 90, 310, -1));
+        jPanel10.add(TxtTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 90, 310, -1));
 
         jLabel22.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jPanel10.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
 
-        jButton13.setBackground(new java.awt.Color(204, 204, 204));
-        jButton13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/borrar.png"))); // NOI18N
-        jButton13.setBorder(null);
-        jPanel10.add(jButton13, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 90, 80));
+        btnEliminar.setBackground(new java.awt.Color(204, 204, 204));
+        btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/borrar.png"))); // NOI18N
+        btnEliminar.setBorder(null);
+        jPanel10.add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 90, 80));
 
-        jButton14.setBackground(new java.awt.Color(204, 204, 204));
-        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/expediente.png"))); // NOI18N
-        jButton14.setBorder(null);
-        jPanel10.add(jButton14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 90, 80));
+        btnAgregar.setBackground(new java.awt.Color(204, 204, 204));
+        btnAgregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/expediente.png"))); // NOI18N
+        btnAgregar.setBorder(null);
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarActionPerformed(evt);
+            }
+        });
+        jPanel10.add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 90, 80));
 
-        jButton15.setBackground(new java.awt.Color(204, 204, 204));
-        jButton15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/actualizar-datos.png"))); // NOI18N
-        jButton15.setBorder(null);
-        jPanel10.add(jButton15, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 260, 90, 80));
+        btnActualizar.setBackground(new java.awt.Color(204, 204, 204));
+        btnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/actualizar-datos.png"))); // NOI18N
+        btnActualizar.setBorder(null);
+        jPanel10.add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 260, 90, 80));
 
         jButton16.setBackground(new java.awt.Color(204, 204, 204));
         jButton16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/guardar-el-archivo.png"))); // NOI18N
@@ -282,14 +287,14 @@ public class FrmTrabajador extends javax.swing.JFrame {
         jLabel23.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel23.setText("Area: ");
         jPanel10.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
-        jPanel10.add(jTextField17, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 310, -1));
+        jPanel10.add(TxtArea, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 310, -1));
 
-        jTextField19.addActionListener(new java.awt.event.ActionListener() {
+        TxtEstado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField19ActionPerformed(evt);
+                TxtEstadoActionPerformed(evt);
             }
         });
-        jPanel10.add(jTextField19, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 170, 310, -1));
+        jPanel10.add(TxtEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 170, 310, -1));
 
         PnCultivo.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 410, 350));
 
@@ -610,21 +615,21 @@ public class FrmTrabajador extends javax.swing.JFrame {
         TpContenedor.setSelectedComponent(PnCultivo);
     }//GEN-LAST:event_BtnCultivos1ActionPerformed
 
-    private void jTextField13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField13ActionPerformed
+    private void TxtCodigoCultivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtCodigoCultivoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField13ActionPerformed
+    }//GEN-LAST:event_TxtCodigoCultivoActionPerformed
 
-    private void jTextField14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField14ActionPerformed
+    private void TxtNombreCultivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtNombreCultivoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField14ActionPerformed
+    }//GEN-LAST:event_TxtNombreCultivoActionPerformed
 
-    private void jTextField15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField15ActionPerformed
+    private void TxtSiembraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtSiembraActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField15ActionPerformed
+    }//GEN-LAST:event_TxtSiembraActionPerformed
 
-    private void jTextField16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField16ActionPerformed
+    private void TxtTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtTipoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField16ActionPerformed
+    }//GEN-LAST:event_TxtTipoActionPerformed
 
     private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField10ActionPerformed
         // TODO add your handling code here:
@@ -650,9 +655,9 @@ public class FrmTrabajador extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField9ActionPerformed
 
-    private void jTextField19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField19ActionPerformed
+    private void TxtEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtEstadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField19ActionPerformed
+    }//GEN-LAST:event_TxtEstadoActionPerformed
 
     private void jTextField20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField20ActionPerformed
         // TODO add your handling code here:
@@ -665,6 +670,10 @@ public class FrmTrabajador extends javax.swing.JFrame {
     private void jTextField22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField22ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField22ActionPerformed
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        
+    }//GEN-LAST:event_btnAgregarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -710,19 +719,25 @@ public class FrmTrabajador extends javax.swing.JFrame {
     private javax.swing.JPanel PnCultivo;
     private javax.swing.JPanel PnProducción;
     private javax.swing.JTabbedPane TpContenedor;
+    private javax.swing.JTextField TxtArea;
+    private javax.swing.JTextField TxtCodigoCultivo;
     private javax.swing.JTable TxtDatos1;
     private javax.swing.JTable TxtDatos2;
     private javax.swing.JTable TxtDatos3;
+    private javax.swing.JTextField TxtEstado;
     private javax.swing.JTextField TxtID1;
     private javax.swing.JTextField TxtID2;
     private javax.swing.JTextField TxtID3;
+    private javax.swing.JTextField TxtNombreCultivo;
+    private javax.swing.JTextField TxtSiembra;
+    private javax.swing.JTextField TxtTipo;
+    private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton13;
-    private javax.swing.JButton jButton14;
-    private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton16;
     private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton18;
@@ -774,13 +789,7 @@ public class FrmTrabajador extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField10;
     private javax.swing.JTextField jTextField11;
     private javax.swing.JTextField jTextField12;
-    private javax.swing.JTextField jTextField13;
-    private javax.swing.JTextField jTextField14;
-    private javax.swing.JTextField jTextField15;
-    private javax.swing.JTextField jTextField16;
-    private javax.swing.JTextField jTextField17;
     private javax.swing.JTextField jTextField18;
-    private javax.swing.JTextField jTextField19;
     private javax.swing.JTextField jTextField20;
     private javax.swing.JTextField jTextField21;
     private javax.swing.JTextField jTextField22;

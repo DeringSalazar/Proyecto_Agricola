@@ -69,6 +69,18 @@ public class Cultivos {
         this.fecha_cosecha = fecha_cosecha;
     }
 
+    public void setCedula(Trabajadores cedula) {
+        this.cedula = cedula;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
     public Cultivos(int id, Trabajadores cedula, String nombre, String tipo, double area_Sembrada, String estado_Crecimiento, LocalDate fecha_Siembra, LocalDate fecha_cosecha) {
         this.id = id;
         this.cedula = cedula;

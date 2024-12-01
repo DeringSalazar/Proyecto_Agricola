@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class TrabajadorController {
     private DAO<TrabajadoresDTO> dao;
     private final View view;
-    private final Mapper<Trabajadores, TrabajadoresDTO> mapper;
+    protected final Mapper<Trabajadores, TrabajadoresDTO> mapper;
 
     public TrabajadorController(View view) {
         this.view = view;
@@ -59,16 +59,23 @@ public class TrabajadorController {
              view.showError("Error al guardar datos " + ex.getMessage());
         }
     }
-    public void read(Object id){
+    public TrabajadoresDTO read(Object id, boolean showMessage){
         try {
             TrabajadoresDTO trabajadoresDTO = dao.read(id);
             if (trabajadoresDTO != null) {
-                view.showMessage("Cultivo encontrado: " + trabajadoresDTO);
+                if(showMessage){
+                    view.showMessage("Trabajador no encontrado: " + trabajadoresDTO);
+                }
+                return trabajadoresDTO;
             } else {
-                view.showError("Cultivo no encontrado con ID: " + id);
+                if(showMessage){
+                    view.showError("Trabajador no encontrado con ID: " + id); 
+                }
+                return null;
             }
         } catch (SQLException e) {
             view.showError("Error al buscar el cultivo: " + e.getMessage());
+            return null;
         }
     }
     public void readAll(){
@@ -90,10 +97,11 @@ public class TrabajadorController {
         }
         try {
             if (validatePK(trabajadores.getCedula())){
-                view.showError("La cedula ingresada no se encuentra registrada");
+                view.showError("La cedula ingresada no se encuentra");
                 return;
             }
             dao.update(mapper.toDto(trabajadores));
+            view.showMessage("Se actualizao correctamente");
         } catch (SQLException ex) {
             view.showError("Ocurrio un error al actualizar los datos: "+ ex.getMessage());
         }
@@ -106,10 +114,11 @@ public class TrabajadorController {
         }
         try {
             if (validatePK(trabajadores.getCedula())){
-                view.showError("La cedula ingresada no ya se encuentra registrada");
+                view.showError("La cedula ingresada no se encuentra");
                 return;
             }
             dao.delete(trabajadores.getCedula());
+            view.showMessage("Se elimino correctamente.");
         } catch (SQLException ex) {
             view.showError("Ocurrio un error al eliminar los datos: "+ ex.getMessage());
         }

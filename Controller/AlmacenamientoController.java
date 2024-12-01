@@ -12,6 +12,8 @@ import Model.Almacenamiento.AlmacenamientoDTO;
 import Model.DAO.DAO;
 import Model.DAO.DAOFactory;
 import Model.Mapper.Mapper;
+import Model.Producción.ProduccionDTO;
+import Model.Producción.ProducciónDAO;
 import View.View;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,9 +26,11 @@ public class AlmacenamientoController {
     private DAO<AlmacenamientoDTO> dao;
     private View vista;
     private Mapper<Almacenamiento, AlmacenamientoDTO> mapper;
+    private ProduccionController produccionController;
 
-    public AlmacenamientoController(View vista) {
+    public AlmacenamientoController(View vista,ProduccionController produccionController) {
         this.vista = vista;
+        this.produccionController=produccionController;
         try {
             // Usamos FactoryProducer para obtener la fábrica correcta para "Cultivos"
             DAOFactory factory = FactoryProducer.getFactory("Produccion"); // Indicamos el tipo de entidad
@@ -37,21 +41,25 @@ public class AlmacenamientoController {
             throw new RuntimeException(e);
         }
     }
-    
-    public void insertar(Almacenamiento almacenamiento){
-        if(almacenamiento==null || !validateRequired(almacenamiento)) {
-            vista.showError("Faltan datos requeridos");
+    public void insertar(Almacenamiento almacenamiento) {
+        if (almacenamiento == null || !validateRequired(almacenamiento)) {
+            vista.showError("Faltan datos requeridos.");
             return;
         }
         try {
-            if (!validatePK(almacenamiento.getCantidad())){
-                vista.showError("La cedula ingresada ya se encuentra registrada");
+            ProduccionDTO produccion = produccionController.read(almacenamiento.getIdProducción(),false);
+            if (produccion == null) {
+                vista.showError("La producción asociada con ID " + almacenamiento.getIdProducción() + " no existe.");
+                return;
+            }
+            if (!validatePK(almacenamiento.getCantidad())) {
+                vista.showError("El almacenamiento con la cantidad " + almacenamiento.getCantidad() + " ya existe.");
                 return;
             }
             dao.create(mapper.toDto(almacenamiento));
-            vista.showMessage("Datos guardados correctamente");
+            vista.showMessage("Almacenamiento registrado correctamente.");
         } catch (SQLException ex) {
-            vista.showError("Ocurrio un error al guardar los datos: "+ ex.getMessage());
+            vista.showError("Ocurrió un error al registrar el almacenamiento: " + ex.getMessage());
         }
     }
     
@@ -59,12 +67,12 @@ public class AlmacenamientoController {
         try {
             AlmacenamientoDTO almacenamientoDTO = dao.read(cantidad);
             if (almacenamientoDTO != null) {
-                vista.showMessage("Cultivo encontrado: " + almacenamientoDTO);
+                vista.showMessage("Almacenamiento encontrado: " + almacenamientoDTO);
             } else {
-                vista.showError("Cultivo no encontrado con ID: " + cantidad);
+                vista.showError("Almacenamiento no encontrado con ID: " + cantidad);
             }
         } catch (SQLException e) {
-            vista.showError("Error al buscar el cultivo: " + e.getMessage());
+            vista.showError("Error al buscar el Almacenamiento: " + e.getMessage());
         }
     }
     
@@ -78,6 +86,42 @@ public class AlmacenamientoController {
             vista.showAll(almacenamientoList);
         } catch (SQLException ex) {
             vista.showError("Error al cargar los datos: "+ ex.getMessage());
+        }
+    }
+    public void update(Almacenamiento almacenamiento) {
+        if (almacenamiento == null || !validateRequired(almacenamiento)) {
+            vista.showError("Faltan datos requeridos.");
+            return;
+        }
+        try {
+            ProduccionDTO produccion = produccionController.read(almacenamiento.getIdProducción(),false);
+            if (produccion == null) {
+                vista.showError("La producción asociada con ID " + almacenamiento.getIdProducción() + " no existe.");
+                return;
+            }
+            if (!validatePK(almacenamiento.getCantidad())) {
+                vista.showError("El almacenamiento con la cantidad " + almacenamiento.getCantidad() + " no existe.");
+                return;
+            }
+            dao.update(mapper.toDto(almacenamiento));
+            vista.showMessage("Almacenamiento actualizado correctamente.");
+        } catch (SQLException ex) {
+            vista.showError("Ocurrió un error al actualizar el almacenamiento: " + ex.getMessage());
+        }
+    }
+    
+    public void delete(int cantidad) {
+        try {
+            // Verificar si el almacenamiento existe antes de eliminarlo
+            if (!validatePK(cantidad)) {
+                vista.showError("El almacenamiento con la cantidad " + cantidad + " no existe.");
+                return;
+            }
+
+            dao.delete(cantidad);
+            vista.showMessage("Almacenamiento eliminado correctamente.");
+        } catch (SQLException ex) {
+            vista.showError("Ocurrió un error al eliminar el almacenamiento: " + ex.getMessage());
         }
     }
      
@@ -94,4 +138,5 @@ public class AlmacenamientoController {
         }
         return false;
     }
+
 }

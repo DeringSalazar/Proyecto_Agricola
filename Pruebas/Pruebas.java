@@ -4,7 +4,9 @@
  */
 package Pruebas;
 
+import Controller.CultivosController;
 import Controller.ProduccionController;
+import Controller.TrabajadorController;
 import Controller.UsuariosControllers;
 import Model.Trabajador.TrabajadoresDAO;
 import Model.Trabajador.TrabajadoresDTO;
@@ -12,7 +14,10 @@ import Model.UsuarioDAO;
 import Model.UsuarioDTO;
 import java.sql.SQLException;
 import Database.DataBase;
+import Model.Cultivos.Cultivos;
+import Model.Cultivos.CultivosDTO;
 import Model.Producción.ProduccionDTO;
+import Model.Trabajador.Trabajadores;
 import Model.Usuarios;
 import UtilDate.UtilDate;
 import View.View;
@@ -32,20 +37,29 @@ public class Pruebas {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SQLException {
+         // Crear la vista de la consola
         ConsoleView view = new ConsoleView();
 
-        // Crear el controlador para manejar la lógica de la producción
-        ProduccionController produccionController = new ProduccionController(view);
+        // Crear el controlador de trabajadores
+        TrabajadorController trabajadorController = new TrabajadorController(view);
 
-        // Obtener las producciones desde la base de datos
-        List<ProduccionDTO> producciones = produccionController.getProduccionesFromDB();
+        // Crear el controlador de cultivos, pasando el controlador de trabajadores
+        CultivosController cultivosController = new CultivosController(view, trabajadorController);
 
-        // Si se obtienen producciones de la base de datos, generar el reporte XML
-        if (producciones != null && !producciones.isEmpty()) {
-            // Llamar al método para generar el reporte XML
-            produccionController.generarReporteXML(producciones);
-        } else {
-            view.showError("No se encontraron producciones para generar el reporte.");
-        }
+        // Datos del trabajador que no existe
+        String cedulaTrabajador = "123456789"; // Cédula del trabajador que no existe
+        Cultivos cultivo = new Cultivos();
+        cultivo.setId(1); // ID del cultivo
+        cultivo.setNombre("Maíz");
+        cultivo.setTipo("Cereal");
+        cultivo.setArea_Sembrada(100.0);
+        cultivo.setEstado_Crecimiento("Creciendo");
+        // Ejemplo de cómo usar los métodos correctamente
+        cultivo.setFecha_Siembra(UtilDate.toLocalDate("11/11/2000"));
+        cultivo.setFecha_Siembra(UtilDate.toLocalDate("15/11/2000"));
+
+
+        // Intentar insertar el cultivo a un trabajador que no existe
+        cultivosController.insertar(cultivo, cedulaTrabajador);
     }
 }
