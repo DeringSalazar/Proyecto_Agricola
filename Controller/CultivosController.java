@@ -44,8 +44,9 @@ public class CultivosController {
         }
     }
     
-    public void insertar(Cultivos cultivo, String cedulaTrabajador) {
-    try {
+    public void insertar(Cultivos cultivo) {
+        String cedulaTrabajador = null;
+        try {
         TrabajadoresDTO trabajadorDTO = control.read(cedulaTrabajador, false);
         if (trabajadorDTO == null) {
             vista.showError("El trabajador con la cédula " + cedulaTrabajador + " no existe. Agrega una cédula existente.");
