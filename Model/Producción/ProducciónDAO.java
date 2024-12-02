@@ -66,7 +66,7 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public boolean update(ProduccionDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call UpdateProduccion(?,?,?)");
+        stmt = connection.prepareStatement("call UpdateProducciones(?,?,?)");
         stmt.setInt(1, dto.getId());
         stmt.setString(2, dto.getCantidad_Recolectada());
         stmt.setString(3, dto.getDestino());
@@ -77,7 +77,7 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
     @Override
     public boolean delete(Object id) throws SQLException {
         stmt = connection.prepareStatement("call DeleteProduccion(?)");
-        stmt.setString(1, String.valueOf(id));
+        stmt.setInt(1, (int) id);
         return stmt.executeUpdate()>0;
     }
     

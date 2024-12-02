@@ -122,19 +122,19 @@ public class ProduccionController {
                 return;
             }
             dao.update(mapper.toDto(produccion));
-            viewerror.showMessage("Producción actualizada con éxito.");
+            viewerror.  showMessage("Producción actualizada con éxito.");
         } catch (SQLException ex) {
             Logger.getLogger(ProduccionController.class.getName()).log(Level.SEVERE, null, ex);
             viewerror.showError("Error al actualizar la producción: " + ex.getMessage());
         }
     }
-    public void delete(int id) {
+    public void delete(Produccion produccion) {
         try {
-            if (!validatePK(id)) {
-                viewerror.showError("La producción con ID " + id + " no existe.");
+            if (!validatePK(produccion.getId())) {
+                viewerror.showError("La producción con ID " + produccion.getId() + " no existe.");
                 return;
             }
-            dao.delete(id);
+            dao.delete(produccion.getId());
             viewerror.showMessage("Producción eliminada con éxito.");
         } catch (SQLException ex) {
             Logger.getLogger(ProduccionController.class.getName()).log(Level.SEVERE, null, ex);
@@ -144,11 +144,11 @@ public class ProduccionController {
      
    public boolean validateRequired(Produccion produccion) {
     return 
-           (produccion.getIdCultivo() == null || produccion.getIdCultivo().getId() > 0) &&
-           (produccion.getFecha() == null || produccion.getFecha() != null) &&
-           !produccion.getCalidad().trim().isEmpty() &&
-           !produccion.getDestino().trim().isEmpty() &&
-           !produccion.getCantidad_Recolectada().trim().isEmpty();
+        (produccion.getIdCultivo() != null && produccion.getIdCultivo().getId() > 0) &&
+        produccion.getFecha() != null &&
+        !produccion.getCalidad().trim().isEmpty() &&
+        !produccion.getDestino().trim().isEmpty() &&
+        !produccion.getCantidad_Recolectada().trim().isEmpty();
 }
 
 
@@ -180,6 +180,7 @@ public class ProduccionController {
 
                 // Crear y agregar los elementos hijo para cada atributo
                 addElement(document, produccionElement, "ID", String.valueOf(produccion.getId()));
+                addElement(document, produccionElement, "id_cultivo", String.valueOf(produccion.getIdCultivo()));
                 addElement(document, produccionElement, "Fecha", produccion.getFecha().toString());
                 addElement(document, produccionElement, "Calidad", produccion.getCalidad());
                 addElement(document, produccionElement, "Destino", produccion.getDestino());

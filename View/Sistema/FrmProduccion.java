@@ -12,6 +12,8 @@ import Model.Cultivos.Cultivos;
 import Model.Cultivos.CultivosDAO;
 import Model.Cultivos.CultivosDTO;
 import Model.Producción.Produccion;
+import Model.Producción.ProduccionDTO;
+import Model.Producción.ProducciónDAO;
 import UtilDate.UtilDate;
 import UtilDate.UtilGui;
 import View.View;
@@ -25,6 +27,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.RowFilter;
 
 /**
  *
@@ -41,36 +47,39 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
      */
     public FrmProduccion() {
         initComponents();
-        View vista = this; // La vista actual
-     TrabajadorController trabajadorController = new TrabajadorController(vista);
-    cultivos = new CultivosController(vista, trabajadorController); // Inicialización del controlador de cultivos
-    controller = new ProduccionController(this, cultivos); // Inicialización del controlador de producción
+        View vista = this;
+            TrabajadorController trabajadorController = new TrabajadorController(vista);
+            cultivos = new CultivosController(vista, trabajadorController);
+            controller = new ProduccionController(this, cultivos);
 
-    this.setLocationRelativeTo(this);
-    tablemodel = (DefaultTableModel) TxtDatos3.getModel();
-    sorter = new TableRowSorter<>(this.TxtDatos3.getModel());
-    TxtDatos3.setRowSorter(sorter);
+            this.setLocationRelativeTo(this);
+            tablemodel = (DefaultTableModel) TxtDatos3.getModel();
+            sorter = new TableRowSorter<>(this.TxtDatos3.getModel());
+            TxtDatos3.setRowSorter(sorter);
 
-    TxtDatos3.getSelectionModel().addListSelectionListener(evt -> {
-        if (!evt.getValueIsAdjusting()) {
-            int selectedRow = TxtDatos3.getSelectedRow();
-            if (selectedRow >= 0) {
-                String codigo = tablemodel.getValueAt(selectedRow, 0).toString();
-                String cultivo = tablemodel.getValueAt(selectedRow, 1).toString();
-                String fecha = tablemodel.getValueAt(selectedRow, 2).toString();
-                String calidad = tablemodel.getValueAt(selectedRow,3).toString();
-                String destino = tablemodel.getValueAt(selectedRow, 4).toString();
-                String cantidad = tablemodel.getValueAt(selectedRow, 5).toString();
-                
-                txtProduccion.setText(codigo);
-                txtCultivo.setText(cultivo);
-                TxtFecha.setText(fecha);
-                TxtCalidad.setText(calidad);
-                txtDestino.setText(destino);
-                txtCantidad.setText(cantidad);
-            }
-        }
-    });
+            // Formato de fecha deseado
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+            TxtDatos3.getSelectionModel().addListSelectionListener(evt -> {
+                if (!evt.getValueIsAdjusting()) {
+                    int selectedRow = TxtDatos3.getSelectedRow();
+                    if (selectedRow >= 0) {
+                        String codigo = tablemodel.getValueAt(selectedRow, 0).toString();
+                        String cultivo = tablemodel.getValueAt(selectedRow, 1).toString();
+                        LocalDate fecha = (LocalDate) tablemodel.getValueAt(selectedRow, 2); 
+                        String calidad = tablemodel.getValueAt(selectedRow, 3).toString();
+                        String destino = tablemodel.getValueAt(selectedRow, 4).toString();
+                        String cantidad = tablemodel.getValueAt(selectedRow, 5).toString();
+
+                        txtProduccion.setText(codigo);
+                        txtCultivo.setText(cultivo);
+                        TxtFecha.setText(fecha.format(formatter));
+                        TxtCalidad.setText(calidad);
+                        txtDestino.setText(destino);
+                        txtCantidad.setText(cantidad);
+                    }
+                }
+            });
     }
 
     /**
@@ -87,7 +96,7 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
         jLabel11 = new javax.swing.JLabel();
         TxtID3 = new javax.swing.JTextField();
         jButton17 = new javax.swing.JButton();
-        jButton24 = new javax.swing.JButton();
+        btnGenerarXML = new javax.swing.JButton();
         jPanel13 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
@@ -123,6 +132,12 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
         jLabel11.setFont(new java.awt.Font("Serif", 1, 18)); // NOI18N
         jLabel11.setText("Producción");
         jPanel12.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
+
+        TxtID3.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                TxtID3KeyReleased(evt);
+            }
+        });
         jPanel12.add(TxtID3, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 620, -1));
 
         jButton17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/buscar.png"))); // NOI18N
@@ -134,9 +149,14 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
         });
         jPanel12.add(jButton17, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 10, 40, 40));
 
-        jButton24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/xml (2).png"))); // NOI18N
-        jButton24.setBorder(null);
-        jPanel12.add(jButton24, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
+        btnGenerarXML.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/xml (2).png"))); // NOI18N
+        btnGenerarXML.setBorder(null);
+        btnGenerarXML.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarXMLActionPerformed(evt);
+            }
+        });
+        jPanel12.add(btnGenerarXML, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
 
         PnProducción.add(jPanel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, 60));
 
@@ -344,10 +364,9 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
         JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
+
     try {
         int idCultivo = Integer.parseInt(txtCultivo.getText().trim());
-
-        // Valida que el cultivo exista antes de proceder
         CultivosDAO cultivosDAO = new CultivosDAO(DataBase.getInstance().getConnection());
         CultivosDTO cultivoDTO = cultivosDAO.read(idCultivo);
 
@@ -355,20 +374,28 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
             JOptionPane.showMessageDialog(this, "Cultivo no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        Cultivos cultivo = cultivos.mapper.toEntity(cultivoDTO);
-        Produccion actualizado = new Produccion(
-                0,
-                cultivo, // Mantienes el ID del cultivo
-                UtilDate.toLocalDate(TxtFecha.getText()), 
-                txtCantidad.getText().trim(), 
-                txtDestino.getText().trim(), 
-                txtCantidad.getText().trim() 
-        );
+        int idProduccion = (int) tablemodel.getValueAt(TxtDatos3.getSelectedRow(), 0);
+        String cantidad = txtCantidad.getText().trim();
+        String destino = txtDestino.getText().trim();
 
-        // Llama al controlador para actualizar
-        controller.update(actualizado);
+        if (cantidad.length() > 50 || destino.length() > 20) {
+            JOptionPane.showMessageDialog(this, "Cantidad o Destino tienen un tamaño mayor al permitido.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        // Limpia los campos y recarga los datos
+        String calidad = TxtCalidad.getText().trim();
+        LocalDate localFecha = LocalDate.parse(TxtFecha.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        Date fecha = java.sql.Date.valueOf(localFecha); 
+        ProduccionDTO produccionDTO = new ProduccionDTO(idProduccion, idCultivo, (java.sql.Date) fecha, calidad, destino, cantidad);
+        
+        ProducciónDAO produccionDAO = new ProducciónDAO(DataBase.getInstance().getConnection());
+        boolean updated = produccionDAO.update(produccionDTO);
+
+        if (updated) {
+            JOptionPane.showMessageDialog(this, "Producción actualizada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al actualizar la producción.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
         clear();
         controller.readAll();
 
@@ -380,24 +407,52 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-       
+        // Obtener el ID de la producción
         int idProduccion = Integer.parseInt(txtProduccion.getText().trim());
+
+        // Confirmar eliminación
         int confirm = JOptionPane.showConfirmDialog(this, 
             "¿Estás seguro de eliminar la producción con ID " + idProduccion + "?",
             "Confirmación", JOptionPane.YES_NO_OPTION);
+
         if (confirm != JOptionPane.YES_OPTION) {
             return;
         }
-          try{
-              Produccion produccionEliminar = new Produccion();
-              produccionEliminar.setId(idProduccion);
-              clear();
+
+        try {
+            // Crear el objeto Produccion con el ID
+            Produccion produccionEliminar = new Produccion();
+            produccionEliminar.setId(idProduccion);
+
+            // Llamar al controlador para eliminar la producción
+            controller.delete(produccionEliminar);
+
+            // Si la eliminación es exitosa, refrescar los datos
+            clear();
             controller.readAll();
-        JOptionPane.showMessageDialog(this, "Se elimino correctamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "El ID debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
-    }
+            JOptionPane.showMessageDialog(this, "Se eliminó correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al eliminar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void TxtID3KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtID3KeyReleased
+        String search =TxtID3.getText();
+        if(search.trim().isEmpty()){
+            sorter.setRowFilter(null);
+        }else{
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)"+search));
+        }
+    }//GEN-LAST:event_TxtID3KeyReleased
+
+    private void btnGenerarXMLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarXMLActionPerformed
+    List<ProduccionDTO> producciones = controller.getProduccionesFromDB();
+    if (producciones != null && !producciones.isEmpty()) {
+        controller.generarReporteXML(producciones);
+    } else {
+        JOptionPane.showMessageDialog(this, "No hay datos disponibles para generar el XML.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    }
+    }//GEN-LAST:event_btnGenerarXMLActionPerformed
 
     /**
      * @param args the command line arguments
@@ -443,9 +498,9 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
     private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnGenerarXML;
     private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton21;
-    private javax.swing.JButton jButton24;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel15;
@@ -516,11 +571,11 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
 
     @Override
     public boolean validateRequired() {
-        return !txtCultivo.getText().trim().isEmpty()&&
-                !TxtFecha.getText().trim().isEmpty()&&
-                !TxtCalidad.getText().trim().isEmpty()&&
-                !txtDestino.getText().trim().isEmpty()&&
-                !txtCantidad.getText().trim().isEmpty();
+        return !txtCultivo.getText().trim().isEmpty() &&
+           !TxtFecha.getText().trim().isEmpty() &&
+           !TxtCalidad.getText().trim().isEmpty() &&
+           !txtDestino.getText().trim().isEmpty() &&
+           !txtCantidad.getText().trim().isEmpty();
     }
         private void clear() {
         txtProduccion.setText("");
