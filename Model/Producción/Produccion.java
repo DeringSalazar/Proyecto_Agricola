@@ -47,6 +47,15 @@ public class Produccion {
         this.cantidad_Recolectada = cantidad_Recolectada;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setIdCultivo(Cultivos idCultivo) {
+        this.idCultivo = idCultivo;
+    }
+    
+
     public Produccion(int id, Cultivos idCultivo, LocalDate fecha, String calidad, String destino, String cantidad_Recolectada) {
         this.id = id;
         this.idCultivo = idCultivo;

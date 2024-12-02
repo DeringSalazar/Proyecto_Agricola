@@ -38,28 +38,28 @@ public class Pruebas {
      */
     public static void main(String[] args) throws SQLException {
          // Crear la vista de la consola
-        ConsoleView view = new ConsoleView();
-
-        // Crear el controlador de trabajadores
-        TrabajadorController trabajadorController = new TrabajadorController(view);
-
-        // Crear el controlador de cultivos, pasando el controlador de trabajadores
-        CultivosController cultivosController = new CultivosController(view, trabajadorController);
-
-        // Datos del trabajador que no existe
-        String cedulaTrabajador = "123456789"; // Cédula del trabajador que no existe
-        Cultivos cultivo = new Cultivos();
-        cultivo.setId(1); // ID del cultivo
-        cultivo.setNombre("Maíz");
-        cultivo.setTipo("Cereal");
-        cultivo.setArea_Sembrada(100.0);
-        cultivo.setEstado_Crecimiento("Creciendo");
-        // Ejemplo de cómo usar los métodos correctamente
-        cultivo.setFecha_Siembra(UtilDate.toLocalDate("11/11/2000"));
-        cultivo.setFecha_Siembra(UtilDate.toLocalDate("15/11/2000"));
-
-
-        // Intentar insertar el cultivo a un trabajador que no existe
-        cultivosController.insertar(cultivo, cedulaTrabajador);
+//        ConsoleView view = new ConsoleView();
+//
+//        // Crear el controlador de trabajadores
+//        TrabajadorController trabajadorController = new TrabajadorController(view);
+//
+//        // Crear el controlador de cultivos, pasando el controlador de trabajadores
+//        CultivosController cultivosController = new CultivosController(view, trabajadorController);
+//
+//        // Datos del trabajador que no existe
+//        String cedulaTrabajador = "123456789"; // Cédula del trabajador que no existe
+//        Cultivos cultivo = new Cultivos();
+//        cultivo.setId(1); // ID del cultivo
+//        cultivo.setNombre("Maíz");
+//        cultivo.setTipo("Cereal");
+//        cultivo.setArea_Sembrada(100.0);
+//        cultivo.setEstado_Crecimiento("Creciendo");
+//        // Ejemplo de cómo usar los métodos correctamente
+//        cultivo.setFecha_Siembra(UtilDate.toLocalDate("11/11/2000"));
+//        cultivo.setFecha_Siembra(UtilDate.toLocalDate("15/11/2000"));
+//
+//
+//        // Intentar insertar el cultivo a un trabajador que no existe
+//        cultivosController.insertar(cultivo, cedulaTrabajador);
     }
 }

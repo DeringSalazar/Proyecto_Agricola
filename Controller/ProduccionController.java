@@ -32,12 +32,12 @@ import javax.xml.transform.stream.StreamResult;
 
 public class ProduccionController {
     private DAO<ProduccionDTO> dao;
-    private View vista;
+    private View viewerror;
     private Mapper<Produccion, ProduccionDTO> mapper;
     private CultivosController cultivosController;
     
     public ProduccionController(View vista, CultivosController cultivosController) {
-        this.vista = vista;
+        this.viewerror = vista;
         this.cultivosController=cultivosController;
         try {
             DAOFactory factory = FactoryProducer.getFactory("Produccion"); // Indicamos el tipo de entidad
@@ -49,45 +49,47 @@ public class ProduccionController {
         }
     }
     
-        public void insertar(Produccion produccion) {
-        if (produccion == null || !validateRequired(produccion)) {
-            vista.showError("Faltan datos requeridos.");
+    public void insertar(Produccion produccion) {
+        // Validar si los campos necesarios no son nulos o vacíos
+        if (!validateRequired(produccion)) {
+            viewerror.showError("Faltan datos requeridos para la producción");
             return;
         }
+
         try {
-            CultivosDTO cultivoDTO = cultivosController.read(produccion.getIdCultivo(), false);
+            // Verificar si el cultivo existe
+            CultivosDTO cultivoDTO = cultivosController.read(produccion.getIdCultivo().getId(), false); // Suponiendo que Produccion tiene un objeto Cultivo
             if (cultivoDTO == null) {
-                vista.showError("El cultivo con ID " + produccion.getIdCultivo() + " no existe. No se puede registrar la producción.");
-                return;
-            }
-            if (!validatePK(produccion.getId())) {
-                vista.showError("La producción con ID " + produccion.getId() + " ya está registrada.");
+                viewerror.showError("El cultivo con ID " + produccion.getIdCultivo().getId() + " no existe.");
                 return;
             }
 
-            dao.create(mapper.toDto(produccion));
-            vista.showMessage("Producción registrada con éxito.");
+            // Si el cultivo existe, insertamos la producción
+            dao.create(mapper.toDto(produccion)); // Aquí mapeamos la entidad Produccion a ProduccionDTO y la insertamos
+            viewerror.showMessage("Producción registrada con éxito");
+
         } catch (SQLException ex) {
-            vista.showError("Ocurrió un error al registrar la producción: " + ex.getMessage());
+            viewerror.showError("Error al registrar la producción: " + ex.getMessage());
         }
     }
+
     
     public ProduccionDTO read(Object id,boolean showMessage){
         try {
             ProduccionDTO produccionDTO = dao.read(id);
             if (produccionDTO != null) {
                 if(showMessage){
-                    vista.showMessage("Produccion encontrado");
+                    viewerror.showMessage("Produccion encontrado");
                 }
                 return produccionDTO;
             }else{
                 if(showMessage){
-                    vista.showError("Produccion no encontrado con el id " + id);
+                    viewerror.showError("Produccion no encontrado con el id " + id);
                 }
                 return null;
             }
         }catch(SQLException e){
-            vista.showError("Error al buscar cultivo");
+            viewerror.showError("Error al buscar la produccion");
             return null;
         }
     }
@@ -99,54 +101,56 @@ public class ProduccionController {
                     .map(mapper::toEntity)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            vista.showAll(produccionList);
+            viewerror.showAll(produccionList);
         } catch (SQLException ex) {
-            vista.showError("Error al cargar los datos: "+ ex.getMessage());
+            viewerror.showError("Error al cargar los datos: "+ ex.getMessage());
         }
     }
         public void update(Produccion produccion) {
         if (produccion == null || !validateRequired(produccion)) {
-            vista.showError("Faltan datos requeridos.");
+            viewerror.showError("Faltan datos requeridos.");
             return;
         }
         try {
             if (!validatePK(produccion.getId())) {
-                vista.showError("La producción con ID " + produccion.getId() + " no existe.");
+                viewerror.showError("La producción con ID " + produccion.getId() + " no existe.");
                 return;
             }
            CultivosDTO cultivoDTO = cultivosController.read(produccion.getIdCultivo(), false);
             if (cultivoDTO == null) {
-                vista.showError("El cultivo con ID " + produccion.getIdCultivo() + " no existe. No se puede actualizar la producción.");
+                viewerror.showError("El cultivo con ID " + produccion.getIdCultivo() + " no existe. No se puede actualizar la producción.");
                 return;
             }
             dao.update(mapper.toDto(produccion));
-            vista.showMessage("Producción actualizada con éxito.");
+            viewerror.showMessage("Producción actualizada con éxito.");
         } catch (SQLException ex) {
             Logger.getLogger(ProduccionController.class.getName()).log(Level.SEVERE, null, ex);
-            vista.showError("Error al actualizar la producción: " + ex.getMessage());
+            viewerror.showError("Error al actualizar la producción: " + ex.getMessage());
         }
     }
     public void delete(int id) {
         try {
             if (!validatePK(id)) {
-                vista.showError("La producción con ID " + id + " no existe.");
+                viewerror.showError("La producción con ID " + id + " no existe.");
                 return;
             }
             dao.delete(id);
-            vista.showMessage("Producción eliminada con éxito.");
+            viewerror.showMessage("Producción eliminada con éxito.");
         } catch (SQLException ex) {
             Logger.getLogger(ProduccionController.class.getName()).log(Level.SEVERE, null, ex);
-            vista.showError("Error al eliminar la producción: " + ex.getMessage());
+            viewerror.showError("Error al eliminar la producción: " + ex.getMessage());
         }
     }
      
-    public boolean validateRequired(Produccion produccion) {
-        return produccion.getId() != 0 &&
-                produccion.getFecha() != null &&
-                !produccion.getCalidad().trim().isEmpty()&&
-                !produccion.getDestino().trim().isEmpty() &&
-                !produccion.getCantidad_Recolectada().trim().isEmpty();
-    }
+   public boolean validateRequired(Produccion produccion) {
+    return produccion.getId() != 0 &&
+           (produccion.getIdCultivo() == null || produccion.getIdCultivo().getId() > 0) &&
+           (produccion.getFecha() == null || produccion.getFecha() != null) &&
+           !produccion.getCalidad().trim().isEmpty() &&
+           !produccion.getDestino().trim().isEmpty() &&
+           !produccion.getCantidad_Recolectada().trim().isEmpty();
+}
+
 
     public boolean validatePK(int id) {
         try {
@@ -193,10 +197,10 @@ public class ProduccionController {
 
             // Escribir el archivo
             transformer.transform(source, result);
-            vista.showMessage("Reporte XML generado correctamente.");
+            viewerror.showMessage("Reporte XML generado correctamente.");
 
         } catch (Exception e) {
-            vista.showError("Error al generar el reporte XML: " + e.getMessage());
+            viewerror.showError("Error al generar el reporte XML: " + e.getMessage());
         }
     }
 
@@ -210,7 +214,7 @@ public class ProduccionController {
         try {
             return dao.readAll();  
         } catch (SQLException e) {
-            vista.showError("Error al obtener producciones desde la base de datos: " + e.getMessage());
+            viewerror.showError("Error al obtener producciones desde la base de datos: " + e.getMessage());
             return null;
         }
     }

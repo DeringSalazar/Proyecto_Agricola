@@ -4,17 +4,73 @@
  */
 package View.Sistema;
 
+import Controller.CultivosController;
+import Controller.ProduccionController;
+import Controller.TrabajadorController;
+import Database.DataBase;
+import Model.Cultivos.Cultivos;
+import Model.Cultivos.CultivosDAO;
+import Model.Cultivos.CultivosDTO;
+import Model.Producción.Produccion;
+import UtilDate.UtilDate;
+import UtilDate.UtilGui;
+import View.View;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import java.sql.SQLException;
+
 /**
  *
  * @author Dering
  */
-public class FrmProduccion extends javax.swing.JFrame {
-
+public class FrmProduccion extends javax.swing.JFrame implements View<Produccion>{
+    private ProduccionController controller;
+    private CultivosController cultivos;
+    private Produccion produccion;
+    private DefaultTableModel tablemodel;
+    TableRowSorter<TableModel> sorter;
     /**
      * Creates new form FrmProduccion
      */
     public FrmProduccion() {
         initComponents();
+        View vista = this; // La vista actual
+     TrabajadorController trabajadorController = new TrabajadorController(vista);
+    cultivos = new CultivosController(vista, trabajadorController); // Inicialización del controlador de cultivos
+    controller = new ProduccionController(this, cultivos); // Inicialización del controlador de producción
+
+    this.setLocationRelativeTo(this);
+    tablemodel = (DefaultTableModel) TxtDatos3.getModel();
+    sorter = new TableRowSorter<>(this.TxtDatos3.getModel());
+    TxtDatos3.setRowSorter(sorter);
+
+    TxtDatos3.getSelectionModel().addListSelectionListener(evt -> {
+        if (!evt.getValueIsAdjusting()) {
+            int selectedRow = TxtDatos3.getSelectedRow();
+            if (selectedRow >= 0) {
+                String codigo = tablemodel.getValueAt(selectedRow, 0).toString();
+                String cultivo = tablemodel.getValueAt(selectedRow, 1).toString();
+                String fecha = tablemodel.getValueAt(selectedRow, 2).toString();
+                String calidad = tablemodel.getValueAt(selectedRow,3).toString();
+                String destino = tablemodel.getValueAt(selectedRow, 4).toString();
+                String cantidad = tablemodel.getValueAt(selectedRow, 5).toString();
+                
+                txtProduccion.setText(codigo);
+                txtCultivo.setText(cultivo);
+                TxtFecha.setText(fecha);
+                TxtCalidad.setText(calidad);
+                txtDestino.setText(destino);
+                txtCantidad.setText(cantidad);
+            }
+        }
+    });
     }
 
     /**
@@ -35,21 +91,21 @@ public class FrmProduccion extends javax.swing.JFrame {
         jPanel13 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        jTextField10 = new javax.swing.JTextField();
-        jTextField11 = new javax.swing.JTextField();
+        txtCultivo = new javax.swing.JTextField();
+        txtCantidad = new javax.swing.JTextField();
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
-        jButton18 = new javax.swing.JButton();
-        jButton19 = new javax.swing.JButton();
-        jButton20 = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnAgregar = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
         jButton21 = new javax.swing.JButton();
         jLabel27 = new javax.swing.JLabel();
-        jTextField12 = new javax.swing.JTextField();
+        TxtCalidad = new javax.swing.JTextField();
         jLabel28 = new javax.swing.JLabel();
-        jTextField18 = new javax.swing.JTextField();
-        jTextField20 = new javax.swing.JTextField();
+        txtDestino = new javax.swing.JTextField();
+        TxtFecha = new javax.swing.JTextField();
         jLabel30 = new javax.swing.JLabel();
-        jTextField13 = new javax.swing.JTextField();
+        txtProduccion = new javax.swing.JTextField();
         jPanel14 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         TxtDatos3 = new javax.swing.JTable();
@@ -71,6 +127,11 @@ public class FrmProduccion extends javax.swing.JFrame {
 
         jButton17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/buscar.png"))); // NOI18N
         jButton17.setBorder(null);
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton17ActionPerformed(evt);
+            }
+        });
         jPanel12.add(jButton17, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 10, 40, 40));
 
         jButton24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/xml (2).png"))); // NOI18N
@@ -91,19 +152,19 @@ public class FrmProduccion extends javax.swing.JFrame {
         jLabel15.setText("Calidad: ");
         jPanel13.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, -1));
 
-        jTextField10.addActionListener(new java.awt.event.ActionListener() {
+        txtCultivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField10ActionPerformed(evt);
+                txtCultivoActionPerformed(evt);
             }
         });
-        jPanel13.add(jTextField10, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 300, -1));
+        jPanel13.add(txtCultivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 300, -1));
 
-        jTextField11.addActionListener(new java.awt.event.ActionListener() {
+        txtCantidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField11ActionPerformed(evt);
+                txtCantidadActionPerformed(evt);
             }
         });
-        jPanel13.add(jTextField11, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 200, 300, -1));
+        jPanel13.add(txtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 200, 300, -1));
 
         jLabel25.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel25.setText("Cantidad: ");
@@ -112,20 +173,35 @@ public class FrmProduccion extends javax.swing.JFrame {
         jLabel26.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jPanel13.add(jLabel26, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
 
-        jButton18.setBackground(new java.awt.Color(204, 204, 204));
-        jButton18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/borrar.png"))); // NOI18N
-        jButton18.setBorder(null);
-        jPanel13.add(jButton18, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 90, 80));
+        btnDelete.setBackground(new java.awt.Color(204, 204, 204));
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/borrar.png"))); // NOI18N
+        btnDelete.setBorder(null);
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+        jPanel13.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 90, 80));
 
-        jButton19.setBackground(new java.awt.Color(204, 204, 204));
-        jButton19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/expediente.png"))); // NOI18N
-        jButton19.setBorder(null);
-        jPanel13.add(jButton19, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 90, 80));
+        btnAgregar.setBackground(new java.awt.Color(204, 204, 204));
+        btnAgregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/expediente.png"))); // NOI18N
+        btnAgregar.setBorder(null);
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarActionPerformed(evt);
+            }
+        });
+        jPanel13.add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 90, 80));
 
-        jButton20.setBackground(new java.awt.Color(204, 204, 204));
-        jButton20.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/actualizar-datos.png"))); // NOI18N
-        jButton20.setBorder(null);
-        jPanel13.add(jButton20, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 260, 90, 80));
+        btnActualizar.setBackground(new java.awt.Color(204, 204, 204));
+        btnActualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/actualizar-datos.png"))); // NOI18N
+        btnActualizar.setBorder(null);
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
+        jPanel13.add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 260, 90, 80));
 
         jButton21.setBackground(new java.awt.Color(204, 204, 204));
         jButton21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/guardar-el-archivo.png"))); // NOI18N
@@ -136,41 +212,42 @@ public class FrmProduccion extends javax.swing.JFrame {
         jLabel27.setText("Fecha: ");
         jPanel13.add(jLabel27, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
 
-        jTextField12.addActionListener(new java.awt.event.ActionListener() {
+        TxtCalidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField12ActionPerformed(evt);
+                TxtCalidadActionPerformed(evt);
             }
         });
-        jPanel13.add(jTextField12, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, 300, -1));
+        jPanel13.add(TxtCalidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, 300, -1));
 
         jLabel28.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel28.setText("Destino: ");
         jPanel13.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
 
-        jTextField18.addActionListener(new java.awt.event.ActionListener() {
+        txtDestino.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField18ActionPerformed(evt);
+                txtDestinoActionPerformed(evt);
             }
         });
-        jPanel13.add(jTextField18, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 160, 300, -1));
+        jPanel13.add(txtDestino, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 160, 300, -1));
 
-        jTextField20.addActionListener(new java.awt.event.ActionListener() {
+        TxtFecha.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField20ActionPerformed(evt);
+                TxtFechaActionPerformed(evt);
             }
         });
-        jPanel13.add(jTextField20, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 300, -1));
+        jPanel13.add(TxtFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 300, -1));
 
         jLabel30.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel30.setText("Codigo: ");
         jPanel13.add(jLabel30, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        jTextField13.addActionListener(new java.awt.event.ActionListener() {
+        txtProduccion.setEditable(false);
+        txtProduccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField13ActionPerformed(evt);
+                txtProduccionActionPerformed(evt);
             }
         });
-        jPanel13.add(jTextField13, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 10, 300, -1));
+        jPanel13.add(txtProduccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 10, 300, -1));
 
         PnProducción.add(jPanel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 410, 350));
 
@@ -201,29 +278,126 @@ public class FrmProduccion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField10ActionPerformed
+    private void txtCultivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCultivoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField10ActionPerformed
+    }//GEN-LAST:event_txtCultivoActionPerformed
 
-    private void jTextField11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField11ActionPerformed
+    private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField11ActionPerformed
+    }//GEN-LAST:event_txtCantidadActionPerformed
 
-    private void jTextField12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField12ActionPerformed
+    private void TxtCalidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtCalidadActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField12ActionPerformed
+    }//GEN-LAST:event_TxtCalidadActionPerformed
 
-    private void jTextField18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField18ActionPerformed
+    private void txtDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDestinoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField18ActionPerformed
+    }//GEN-LAST:event_txtDestinoActionPerformed
 
-    private void jTextField20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField20ActionPerformed
+    private void TxtFechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtFechaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField20ActionPerformed
+    }//GEN-LAST:event_TxtFechaActionPerformed
 
-    private void jTextField13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField13ActionPerformed
+    private void txtProduccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProduccionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField13ActionPerformed
+    }//GEN-LAST:event_txtProduccionActionPerformed
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+    if (!validateRequired()) {
+        JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    try {
+        String cultivoss = String.valueOf(txtCultivo.getText().trim());
+        CultivosDTO cultivoDTO = cultivos.read(cultivoss, false);
+        if (cultivoDTO == null) {
+            JOptionPane.showMessageDialog(this, "El cultivo con ID " + cultivoss + " no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Cultivos cultivo = cultivos.mapper.toEntity(cultivoDTO);
+        produccion = new Produccion(
+            0, // ID autogenerado
+            cultivo,
+            UtilDate.toLocalDate(TxtFecha.getText()),
+            TxtCalidad.getText().trim(),
+            txtDestino.getText().trim(),
+            txtCantidad.getText().trim()
+        );
+
+        controller.insertar(produccion);
+        clear();
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El ID del cultivo debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (IllegalArgumentException e) {
+        JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
+        controller.readAll();
+    }//GEN-LAST:event_jButton17ActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        if (!validateRequired()) {
+        JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    try {
+        int idCultivo = Integer.parseInt(txtCultivo.getText().trim());
+
+        // Valida que el cultivo exista antes de proceder
+        CultivosDAO cultivosDAO = new CultivosDAO(DataBase.getInstance().getConnection());
+        CultivosDTO cultivoDTO = cultivosDAO.read(idCultivo);
+
+        if (cultivoDTO == null) {
+            JOptionPane.showMessageDialog(this, "Cultivo no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Cultivos cultivo = cultivos.mapper.toEntity(cultivoDTO);
+        Produccion actualizado = new Produccion(
+                0,
+                cultivo, // Mantienes el ID del cultivo
+                UtilDate.toLocalDate(TxtFecha.getText()), 
+                txtCantidad.getText().trim(), 
+                txtDestino.getText().trim(), 
+                txtCantidad.getText().trim() 
+        );
+
+        // Llama al controlador para actualizar
+        controller.update(actualizado);
+
+        // Limpia los campos y recarga los datos
+        clear();
+        controller.readAll();
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Error: no se permiten números en destino.", "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al acceder a la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+       
+        int idProduccion = Integer.parseInt(txtProduccion.getText().trim());
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "¿Estás seguro de eliminar la producción con ID " + idProduccion + "?",
+            "Confirmación", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+          try{
+              Produccion produccionEliminar = new Produccion();
+              produccionEliminar.setId(idProduccion);
+              clear();
+            controller.readAll();
+        JOptionPane.showMessageDialog(this, "Se elimino correctamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El ID debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -262,12 +436,14 @@ public class FrmProduccion extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PnProducción;
+    private javax.swing.JTextField TxtCalidad;
     private javax.swing.JTable TxtDatos3;
+    private javax.swing.JTextField TxtFecha;
     private javax.swing.JTextField TxtID3;
+    private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton jButton17;
-    private javax.swing.JButton jButton18;
-    private javax.swing.JButton jButton19;
-    private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton21;
     private javax.swing.JButton jButton24;
     private javax.swing.JLabel jLabel11;
@@ -282,11 +458,76 @@ public class FrmProduccion extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField11;
-    private javax.swing.JTextField jTextField12;
-    private javax.swing.JTextField jTextField13;
-    private javax.swing.JTextField jTextField18;
-    private javax.swing.JTextField jTextField20;
+    private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextField txtCultivo;
+    private javax.swing.JTextField txtDestino;
+    private javax.swing.JTextField txtProduccion;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void show(Produccion ent) {
+        produccion=ent;
+        if (ent==null) {
+            clear();
+            return;
+        }
+        txtProduccion.setText(String.valueOf(ent.getId()));
+        txtCultivo.setText(String.valueOf(ent.getIdCultivo()));
+        TxtFecha.setText(UtilDate.toString(ent.getFecha()));
+        TxtCalidad.setText(ent.getCalidad());
+        txtDestino.setText(ent.getDestino());
+        txtCantidad.setText(ent.getCantidad_Recolectada());
+    }
+    
+
+    @Override
+    public void showAll(List<Produccion> ents) {
+        if(ents==null || tablemodel == null)return;
+        tablemodel.setNumRows(0);
+        ents.forEach(produccion->tablemodel.addRow(
+                new Object[]{
+                    produccion.getId(),
+                    produccion.getIdCultivo(),
+                    produccion.getFecha(),
+                    produccion.getCalidad(),
+                    produccion.getDestino(),
+                    produccion.getCantidad_Recolectada(),
+                }
+        ));
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+
+    }
+
+    @Override
+    public void showSuccess(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+
+    }
+
+    @Override
+    public void showError(String err) {
+        JOptionPane.showMessageDialog(this, err, "Error", JOptionPane.ERROR_MESSAGE);
+
+    }
+
+    @Override
+    public boolean validateRequired() {
+        return !txtCultivo.getText().trim().isEmpty()&&
+                !TxtFecha.getText().trim().isEmpty()&&
+                !TxtCalidad.getText().trim().isEmpty()&&
+                !txtDestino.getText().trim().isEmpty()&&
+                !txtCantidad.getText().trim().isEmpty();
+    }
+        private void clear() {
+        txtProduccion.setText("");
+        txtCultivo.setText("");
+        TxtFecha.setText("");
+        TxtCalidad.setText("");
+        txtDestino.setText("");
+        txtCantidad.setText("");;
+    }
 }

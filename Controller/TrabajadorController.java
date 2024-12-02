@@ -74,7 +74,7 @@ public class TrabajadorController {
                 return null;
             }
         } catch (SQLException e) {
-            view.showError("Error al buscar el cultivo: " + e.getMessage());
+            view.showError("Error al buscar el trabajador: " + e.getMessage());
             return null;
         }
     }

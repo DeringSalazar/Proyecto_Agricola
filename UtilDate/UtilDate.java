@@ -10,7 +10,8 @@ import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
 public class UtilDate {
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault());
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault());
+
     
     public static boolean validate(String date){
         if(date==null || date.trim().isEmpty()) 

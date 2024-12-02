@@ -4,17 +4,63 @@
  */
 package View.Sistema;
 
+import Controller.TrabajadorController;
+import Model.Trabajador.Trabajadores;
+import UtilDate.UtilGui;
+import View.View;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
 /**
  *
  * @author Dering
  */
-public class FrmTrabajo extends javax.swing.JFrame {
+public class FrmTrabajo extends javax.swing.JFrame implements View<Trabajadores>{
+    private TrabajadorController controller;
+    private Trabajadores trabajadores;
+    private DefaultTableModel tablemodel;
+    TableRowSorter<TableModel> sorter;
 
     /**
      * Creates new form FrmTrabajo
      */
     public FrmTrabajo() {
         initComponents();
+       controller = new TrabajadorController((View) this);
+        this.setLocationRelativeTo(this);
+        tablemodel = (DefaultTableModel) TxtDatos.getModel();
+        sorter = new TableRowSorter<>(this.TxtDatos.getModel());
+        TxtDatos.setRowSorter(sorter);
+        
+        TxtDatos.getSelectionModel().addListSelectionListener(evt -> {
+        if (!evt.getValueIsAdjusting()) {
+            int selectedRow = TxtDatos.getSelectedRow();
+            if (selectedRow >= 0) {
+                // Obtener los valores de la fila seleccionada
+                String cedula = tablemodel.getValueAt(selectedRow, 0).toString();
+                String nombre = tablemodel.getValueAt(selectedRow, 1).toString();
+                String telefono = tablemodel.getValueAt(selectedRow, 2).toString();
+                String correo = tablemodel.getValueAt(selectedRow, 3).toString();
+                String puesto = tablemodel.getValueAt(selectedRow, 4).toString();
+                String horario = tablemodel.getValueAt(selectedRow, 5).toString();
+                double salario = Double.parseDouble(tablemodel.getValueAt(selectedRow, 6).toString());
+
+                // Pasar los valores a los JTextFields y JComboBox
+                TxtCedula.setText(cedula);
+                TxtNombre.setText(nombre);
+                TxtTelefono.setText(telefono);
+                TxtCorreo.setText(correo);
+                TxtPuesto.setSelectedItem(puesto);
+                TxtHorario.setText(horario);
+                TxtSalario.setText(String.valueOf(salario));
+            }
+        }
+    });
+
     }
 
     /**
@@ -262,7 +308,13 @@ public class FrmTrabajo extends javax.swing.JFrame {
     }//GEN-LAST:event_TxtSalarioActionPerformed
 
     private void TxtCedulaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TxtCedulaFocusLost
-
+        if(!TxtCedula.isEditable()) return;
+        String id = TxtCedula.getText();
+        if (id.trim().isEmpty()) return;
+        if (!controller.validatePK(id)){
+             showError("La cedula ingresada ya se encuentra registrada");
+             TxtCedula.setText("");
+        }
     }//GEN-LAST:event_TxtCedulaFocusLost
 
     private void TxtCedulaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtCedulaActionPerformed
@@ -286,25 +338,26 @@ public class FrmTrabajo extends javax.swing.JFrame {
     }//GEN-LAST:event_TxtHorarioActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        int codigo = Integer.parseInt(TxtCodigo.getText().trim());
-        if (codigo < 0) {
+        String cedula = TxtCedula.getText().trim();
+        if (cedula.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Seleccione un trabajador para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        int confirm = JOptionPane.showConfirmDialog(  this,"¿Está seguro de que desea eliminar al trabajador con cédula: " + codigo + "?","Confirmar eliminación",JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(  this,"¿Está seguro de que desea eliminar al trabajador con cédula: " + cedula + "?","Confirmar eliminación",JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) {
-            return;
+            return; 
         }
         try {
-            Cultivos cultivosAEliminar = new Cultivos();
-            cultivosAEliminar.setId(codigo);
-            controller.delete(cultivosAEliminar);
+            Trabajadores trabajadorAEliminar = new Trabajadores();
+            trabajadorAEliminar.setCedula(cedula);
+            controller.delete(trabajadorAEliminar);
             clear();
             controller.readAll();
             JOptionPane.showMessageDialog(this, "Trabajador eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error al eliminar el trabajador: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
@@ -312,62 +365,57 @@ public class FrmTrabajo extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        try {
-            int codigo = Integer.parseInt(TxtCodigo.getText().trim());
-            double area = Double.parseDouble(TxtAre.getText().trim());
-            LocalDate siembra = LocalDate.parse(TxtSiem.getText().trim());
-
-            // Asegúrate de inicializar correctamente el objeto Trabajadores
-            Trabajadores cedula = new Trabajadores();
-            cedula.setCedula(TxtCedula.getText().trim()); // Asegúrate de que este método exista y funcione
-
-            cultivos = new Cultivos(
-                codigo,
-                cedula,
-                TxtNom.getText().trim(),
-                Txtip.getText().trim(),
-                area,
-                TxtEst.getText().trim(),
-                siembra
-            );
-
-            controller.insertar(cultivos);
-            clear();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al insertar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+         
+        String puesto = TxtPuesto.getSelectedItem().toString();
+        if ("Puesto".equals(puesto)) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un puesto válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+        try {
+            double salario = Double.parseDouble(TxtSalario.getText().trim()); 
+            trabajadores = new Trabajadores(
+                TxtCedula.getText().trim(), 
+                TxtNombre.getText().trim(), 
+                TxtTelefono.getText().trim(), 
+                TxtCorreo.getText().trim(), 
+                puesto, 
+                TxtHorario.getText().trim(), 
+                salario
+            );
+            controller.insertTrabajador(trabajadores);
+            clear();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El salario debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-        if (!validateRequired()) {
-            JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+            if (!validateRequired()) {
+        JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-        try {
-            LocalDate siembra = LocalDate.parse(TxtSiem.getText().trim());
-            double area = Double.parseDouble(TxtAre.getText().trim());
-            int codigo = Integer.parseInt(TxtCodigo.getText().trim());
-            Trabajadores cedula = new Trabajadores();
-            Cultivos cultivosActualizado = new Cultivos(
-                codigo,
-                cedula,
-                TxtNom.getText().trim(),
-                Txtip.getText().trim(),
-                area,
-                TxtEst.getText().trim(),
-                siembra
-            );
-            controller.update(cultivosActualizado);
-            clear();
-            // Actualizar la tabla con los nuevos datos
-            controller.readAll();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El salario debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al actualizar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+    try {
+        double salario = Double.parseDouble(TxtSalario.getText().trim());
+        Trabajadores trabajadorActualizado = new Trabajadores(
+            TxtCedula.getText().trim(), 
+            TxtNombre.getText().trim(), 
+            TxtTelefono.getText().trim(),
+            TxtCorreo.getText().trim(),
+            TxtPuesto.getSelectedItem().toString(),
+            TxtHorario.getText().trim(),
+            salario
+        );
+        controller.update(trabajadorActualizado);
+        clear();
+        controller.readAll();
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "El salario debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al actualizar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     /**
@@ -433,4 +481,72 @@ public class FrmTrabajo extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void show(Trabajadores ent) {
+        trabajadores=ent;
+        if (ent==null) {
+            clear();
+            return;
+        }
+        TxtCedula.setText(ent.getCedula());
+        TxtNombre.setText(ent.getNombre());
+        TxtTelefono.setText(ent.getTelefono());
+        TxtPuesto.setToolTipText(ent.getPuesto());
+        TxtCorreo.setText(ent.getCorreo());
+        TxtHorario.setText(ent.getHorario());
+        TxtSalario.setText(String.valueOf(ent.getSalario()));
+
+    }
+
+    @Override
+    public void showAll(List<Trabajadores> ents) {
+        if(ents==null || tablemodel == null)return;
+        tablemodel.setNumRows(0);
+        ents.forEach(trabajadores->tablemodel.addRow(
+                new Object[]{
+                    trabajadores.getCedula(),
+                    trabajadores.getNombre(),
+                    trabajadores.getTelefono(),
+                    trabajadores.getCorreo(),
+                    trabajadores.getPuesto(),
+                    trabajadores.getHorario(),
+                    trabajadores.getSalario()
+                    
+                }
+        ));
+
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void showSuccess(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void showError(String err) {
+        JOptionPane.showMessageDialog(this, err, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    @Override
+    public boolean validateRequired() {
+        return UtilGui.validateFields(TxtCedula,TxtNombre,TxtTelefono,TxtCorreo,TxtPuesto,TxtHorario,TxtSalario);
+    }
+    private void clear(){
+        UtilGui.clearTxts(
+                TxtCedula,
+                TxtNombre,
+                TxtTelefono,
+                TxtCorreo,
+                TxtPuesto,
+                TxtHorario,
+                TxtSalario
+        );
+    }
+
 }

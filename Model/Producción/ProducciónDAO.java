@@ -18,12 +18,12 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public boolean create(ProduccionDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call InsertarProduccion(?,?,?,?,?)");
+        stmt = connection.prepareStatement("call InsertarProducciones(?,?,?,?,?)");
         stmt.setInt(1, dto.getIdCultivo());
         stmt.setDate(2, dto.getFecha());
-        stmt.setString(3, dto.getCantidad_Recolectada());
-        stmt.setString(4, dto.getCalidad());
-        stmt.setString(5, dto.getDestino());
+        stmt.setString(3, dto.getCalidad());
+        stmt.setString(4, dto.getDestino());
+        stmt.setString(5, dto.getCantidad_Recolectada());
         
         return stmt.executeUpdate()>0;
     }
@@ -66,7 +66,7 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public boolean update(ProduccionDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call CustomerUpdate(?,?,?)");
+        stmt = connection.prepareStatement("call UpdateProduccion(?,?,?)");
         stmt.setInt(1, dto.getId());
         stmt.setString(2, dto.getCantidad_Recolectada());
         stmt.setString(3, dto.getDestino());
@@ -76,12 +76,13 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public boolean delete(Object id) throws SQLException {
-        stmt = connection.prepareStatement("call CustomerDelete(?)");
+        stmt = connection.prepareStatement("call DeleteProduccion(?)");
         stmt.setString(1, String.valueOf(id));
         return stmt.executeUpdate()>0;
     }
     
-    public boolean validatePK (Object id) throws SQLException{
-        return read(id) == null;
+    public boolean validatePK(Object id) throws SQLException {
+        return read(id) != null; // Devuelve true si el registro existe
     }
+
 }

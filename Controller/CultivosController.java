@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class CultivosController {
     private DAO<CultivosDTO> dao;
-    protected Mapper<Cultivos, CultivosDTO> mapper;
+    public Mapper<Cultivos, CultivosDTO> mapper;
     private final View viewerror;
     private TrabajadorController control;
 
