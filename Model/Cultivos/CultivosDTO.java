@@ -8,7 +8,7 @@ import java.sql.Date;
 
 public class CultivosDTO {
     private int id;
-    private String cedula;
+    private String cedula_trabajador;
     private String nombre;
     private String tipo;
     private double area_Sembrada;
@@ -20,8 +20,8 @@ public class CultivosDTO {
         return id;
     }
 
-    public String getCedula() {
-        return cedula;
+    public String getCedula_trabajador() {
+        return cedula_trabajador;
     }  
     
     public String getNombre() {
@@ -50,7 +50,7 @@ public class CultivosDTO {
 
     public CultivosDTO(int id, String cedula, String nombre, String tipo, double area_Sembrada, String estado_Crecimiento, Date fecha_Siembra, Date fecha_cosecha) {
         this.id = id;
-        this.cedula = cedula;
+        this.cedula_trabajador = cedula;
         this.nombre = nombre;
         this.tipo = tipo;
         this.area_Sembrada = area_Sembrada;

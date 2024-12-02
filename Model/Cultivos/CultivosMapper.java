@@ -20,7 +20,7 @@ public class CultivosMapper implements Mapper<Cultivos, CultivosDTO>{
         if(ent == null) return null;
         return new CultivosDTO(
                 ent.getId(),
-                ent.getCedula().getCedula(),
+                ent.getCedula_trabajador().getCedula(),
                 ent.getNombre(),
                 ent.getTipo(),
                 ent.getArea_Sembrada(),
@@ -36,7 +36,7 @@ public class CultivosMapper implements Mapper<Cultivos, CultivosDTO>{
             if(dto == null) return null;
             return new Cultivos(
                     dto.getId(),
-                    new TrabajadoresMapper().toEntity(new TrabajadoresDAO(DataBase.getInstance().getConnection()).read(dto.getCedula())),
+                    new TrabajadoresMapper().toEntity(new TrabajadoresDAO(DataBase.getInstance().getConnection()).read(dto.getCedula_trabajador())),
                     dto.getNombre(),
                     dto.getTipo(),
                     dto.getArea_Sembrada(),

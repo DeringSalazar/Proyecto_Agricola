@@ -25,11 +25,11 @@ import java.util.stream.Collectors;
 public class CultivosController {
     private DAO<CultivosDTO> dao;
     protected Mapper<Cultivos, CultivosDTO> mapper;
-    private final View vista;
+    private final View viewerror;
     private TrabajadorController control;
 
     public CultivosController(View vista, TrabajadorController control) {
-        this.vista = vista;
+        this.viewerror = vista;
         this.control=control;
         try {
             DAOFactory factory = FactoryProducer.getFactory("Cultivos");
@@ -41,45 +41,36 @@ public class CultivosController {
         }
     }
     
-    public void insertar(Cultivos cultivo) {
-        String cedulaTrabajador = null;
-        try {
-        TrabajadoresDTO trabajadorDTO = control.read(cedulaTrabajador, false);
-        if (trabajadorDTO == null) {
-            vista.showError("El trabajador con la cédula " + cedulaTrabajador + " no existe. Agrega una cédula existente.");
-            return;
-        }
-        Trabajadores trabajador = control.mapper.toEntity(trabajadorDTO);
-        cultivo.setCedula(trabajador);
+    public void insertar(Cultivos cultivo) throws SQLException {
         if (!validateRequired(cultivo)) {
-            vista.showError("Faltan datos requeridos para el cultivo.");
+            viewerror.showError("Faltan datos requeridos para el cultivo.");
             return;
         }
-
-        // Crear el cultivo en la base de datos
-        dao.create(mapper.toDto(cultivo));
-        vista.showMessage("Cultivo registrado con éxito asociado al trabajador: " + trabajador.getNombre());
-    } catch (SQLException ex) {
-        vista.showError("Error al registrar el cultivo: " + ex.getMessage());
+        try{
+            // Crear el cultivo en la base de datos
+            dao.create(mapper.toDto(cultivo));
+            viewerror.showMessage("Cultivo registrado con éxito asociado al trabajador: " + cultivo.getId());
+        } catch (SQLException ex) {
+            viewerror.showError("Error al registrar el cultivo: " + ex.getMessage());
+        }
     }
-}
     
     public CultivosDTO read(Object id, boolean showMessage) {
         try {
             CultivosDTO cultivoDTO = dao.read(id);
             if (cultivoDTO != null) {
                 if (showMessage) {
-                    vista.showMessage("Cultivo encontrado: " + cultivoDTO);
+                    viewerror.showMessage("Cultivo encontrado: " + cultivoDTO);
                 }
                 return cultivoDTO;
             } else {
                 if (showMessage) {
-                    vista.showError("Cultivo no encontrado con ID: " + id);
+                    viewerror.showError("Cultivo no encontrado con ID: " + id);
                 }
                 return null;
             }
         } catch (SQLException e) {
-            vista.showError("Error al buscar el cultivo: " + e.getMessage());
+            viewerror.showError("Error al buscar el cultivo: " + e.getMessage());
             return null;
         }
     }
@@ -91,33 +82,33 @@ public class CultivosController {
                     .map(mapper::toEntity)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            vista.showAll(cultivosList);
+            viewerror.showAll(cultivosList);
         } catch (SQLException ex) {
-            vista.showError("Error al cargar los datos: "+ ex.getMessage());
+            viewerror.showError("Error al cargar los datos: "+ ex.getMessage());
         }
     }
         public void update(Cultivos cultivo) {
         try {
             CultivosDTO cultivoDTO = dao.read(cultivo.getId());
             if (cultivoDTO == null) {
-                vista.showError("El cultivo con ID " + cultivo.getId() + " no existe.");
+                viewerror.showError("El cultivo con ID " + cultivo.getId() + " no existe.");
                 return;
             }
-            TrabajadoresDTO trabajadorDTO = control.read(cultivo.getCedula().getCedula(), false);
+            TrabajadoresDTO trabajadorDTO = control.read(cultivo.getCedula_trabajador().getCedula(), false);
             if (trabajadorDTO == null) {
-                vista.showError("El trabajador con la cédula " + cultivo.getCedula().getCedula() + " no existe. Agrega una cédula existente.");
+                viewerror.showError("El trabajador con la cédula " + cultivo.getCedula_trabajador().getCedula() + " no existe. Agrega una cédula existente.");
                 return;
             }
             Trabajadores trabajador = control.mapper.toEntity(trabajadorDTO);
-            cultivo.setCedula(trabajador);
+            cultivo.setCedula_trabajador(trabajador);
             if (!validateRequired(cultivo)) {
-                vista.showError("Faltan datos requeridos para el cultivo.");
+                viewerror.showError("Faltan datos requeridos para el cultivo.");
                 return;
             }
             dao.update(mapper.toDto(cultivo));
-            vista.showMessage("Cultivo actualizado con éxito.");
+            viewerror.showMessage("Cultivo actualizado con éxito.");
         } catch (SQLException ex) {
-            vista.showError("Error al actualizar el cultivo: " + ex.getMessage());
+            viewerror.showError("Error al actualizar el cultivo: " + ex.getMessage());
         }
     }
         
@@ -125,18 +116,21 @@ public class CultivosController {
         try {
             CultivosDTO cultivoDTO = dao.read(cultivo.getId());
             if (cultivoDTO == null) {
-                vista.showError("El cultivo con ID " + cultivo.getId() + " no existe.");
+                viewerror.showError("El cultivo con ID " + cultivo.getId() + " no existe.");
                 return;
             }
             dao.delete(cultivo.getId()); 
-            vista.showMessage("Cultivo eliminado con éxito.");
+            viewerror.showMessage("Cultivo eliminado con éxito.");
         } catch (SQLException ex) {
-            vista.showError("Error al eliminar el cultivo: " + ex.getMessage());
+            viewerror.showError("Error al eliminar el cultivo: " + ex.getMessage());
         }
     }
 
      
     public boolean validateRequired(Cultivos cultivo) {
+        if (cultivo == null) {
+        return false;
+    }
         return  !cultivo.getNombre().trim().isEmpty()&&
                 !cultivo.getTipo().trim().isEmpty()&&
                 !cultivo.getEstado_Crecimiento().trim().isEmpty();

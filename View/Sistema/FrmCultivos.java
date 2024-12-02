@@ -8,21 +8,29 @@ import Controller.CultivosController;
 import Controller.TrabajadorController;
 import Model.Cultivos.Cultivos;
 import Model.Trabajador.Trabajadores;
+import UtilDate.UtilDate;
 import View.View;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-public class FrmCultivos extends javax.swing.JFrame {
+public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
     private CultivosController controller;
+    List<Cultivos> ents;
     private TrabajadorController trabajador;
     private Trabajadores trabajadores;
     private Cultivos cultivos;
-    private View vista;
     private DefaultTableModel tablemodel;
     TableRowSorter<TableModel> sorter;
     
@@ -31,36 +39,72 @@ public class FrmCultivos extends javax.swing.JFrame {
      */
     public FrmCultivos() {
         initComponents();
-        controller = new CultivosController(vista, trabajador);
+        controller = new CultivosController(this, trabajador);
         this.setLocationRelativeTo(this);
         tablemodel = (DefaultTableModel) TxtDatos.getModel();
         sorter = new TableRowSorter<>(this.TxtDatos.getModel());
         TxtDatos.setRowSorter(sorter);
         
-        TxtDatos.getSelectionModel().addListSelectionListener(evt -> {
-        if (!evt.getValueIsAdjusting()) {
-            int selectedRow = TxtDatos.getSelectedRow();
-            if (selectedRow >= 0) {
-                // Obtener los valores de la fila seleccionada
-                int codigo = Integer.parseInt(tablemodel.getValueAt(selectedRow, 0).toString());
-                String cedula = tablemodel.getValueAt(selectedRow, 1).toString();
-                String nombre = tablemodel.getValueAt(selectedRow, 2).toString();
-                String tipo = tablemodel.getValueAt(selectedRow, 3).toString();
-                double area = Double.parseDouble(tablemodel.getValueAt(selectedRow, 4).toString());
-                String estado = tablemodel.getValueAt(selectedRow, 5).toString();
-                String siembra = tablemodel.getValueAt(selectedRow, 6).toString();
-                
-                // Pasar los valores a los JTextFields y JComboBox
-                TxtCodigo.setText(String.valueOf(codigo));
-                TxtCed.setText(cedula);
-                TxtNom.setText(nombre);
-                Txtip.setText(tipo);
-                TxtAre.setText(String.valueOf(area));
-                TxtEst.setText(estado);
-                TxtSiem.setText(String.valueOf(siembra));
+        Agregar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.readAll(); // Llama al método readAll del controlador
             }
+        });
+        
+    }
+    
+    public void setEnts(List<Cultivos> ents) {
+        this.ents = ents;
+        if (ents == null || tablemodel == null) return;
+        tablemodel.setNumRows(0);
+        
+        ents.forEach(Cultivos -> tablemodel.addRow(
+                new Object[]{
+                    Cultivos.getId(),
+                    Cultivos.getCedula_trabajador(),
+                    Cultivos.getNombre(),
+                    Cultivos.getTipo(),
+                    Cultivos.getArea_Sembrada(),
+                    Cultivos.getEstado_Crecimiento(),
+                    UtilDate.toString(Cultivos.getFecha_Siembra()),
+                    UtilDate.toString(Cultivos.getFecha_cosecha())
+                }
+        ));
+    }
+
+    @Override
+    public void show(Cultivos ent) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showAll(List<Cultivos> ents) {
+        if (ents == null || ents.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay cultivos disponibles", "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+            return;
         }
-    });
+        setEnts(ents);  
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void showSuccess(String msg) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showError(String err) {
+       JOptionPane.showMessageDialog(this, err, "Error", JOptionPane.ERROR_MESSAGE); 
+    }
+
+    @Override
+    public boolean validateRequired() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     /**
@@ -80,7 +124,7 @@ public class FrmCultivos extends javax.swing.JFrame {
         TxtCed = new javax.swing.JTextField();
         TxtNom = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
-        TxtSiem = new javax.swing.JTextField();
+        TxtCos = new javax.swing.JTextField();
         jLabel21 = new javax.swing.JLabel();
         Txtip = new javax.swing.JTextField();
         jLabel22 = new javax.swing.JLabel();
@@ -92,6 +136,8 @@ public class FrmCultivos extends javax.swing.JFrame {
         TxtEst = new javax.swing.JTextField();
         TxtCodigo = new javax.swing.JTextField();
         jLabel29 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        TxtSiem = new javax.swing.JTextField();
         jPanel11 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         TxtDatos = new javax.swing.JTable();
@@ -121,7 +167,7 @@ public class FrmCultivos extends javax.swing.JFrame {
 
         jLabel19.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel19.setText("Tipo:");
-        jPanel10.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
+        jPanel10.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, -1));
 
         TxtCed.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -139,17 +185,17 @@ public class FrmCultivos extends javax.swing.JFrame {
 
         jLabel20.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel20.setText("Estado:");
-        jPanel10.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, -1));
+        jPanel10.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
 
-        TxtSiem.addActionListener(new java.awt.event.ActionListener() {
+        TxtCos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TxtSiemActionPerformed(evt);
+                TxtCosActionPerformed(evt);
             }
         });
-        jPanel10.add(TxtSiem, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 220, 310, -1));
+        jPanel10.add(TxtCos, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 220, 310, -1));
 
         jLabel21.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
-        jLabel21.setText("Siembra:");
+        jLabel21.setText("Cosecha: ");
         jPanel10.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, -1, -1));
 
         Txtip.addActionListener(new java.awt.event.ActionListener() {
@@ -157,7 +203,7 @@ public class FrmCultivos extends javax.swing.JFrame {
                 TxtipActionPerformed(evt);
             }
         });
-        jPanel10.add(Txtip, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 110, 310, -1));
+        jPanel10.add(Txtip, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 100, 310, -1));
 
         jLabel22.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jPanel10.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
@@ -194,15 +240,15 @@ public class FrmCultivos extends javax.swing.JFrame {
 
         jLabel23.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel23.setText("Area: ");
-        jPanel10.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
-        jPanel10.add(TxtAre, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 150, 310, -1));
+        jPanel10.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
+        jPanel10.add(TxtAre, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 130, 310, -1));
 
         TxtEst.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 TxtEstActionPerformed(evt);
             }
         });
-        jPanel10.add(TxtEst, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 190, 310, -1));
+        jPanel10.add(TxtEst, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 160, 310, -1));
 
         TxtCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -215,7 +261,18 @@ public class FrmCultivos extends javax.swing.JFrame {
         jLabel29.setText("Nombre: ");
         jPanel10.add(jLabel29, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
-        PnCultivo.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 410, 350));
+        jLabel24.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
+        jLabel24.setText("Siembra:");
+        jPanel10.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, -1));
+
+        TxtSiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TxtSiemActionPerformed(evt);
+            }
+        });
+        jPanel10.add(TxtSiem, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 190, 310, -1));
+
+        PnCultivo.add(jPanel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 20, 410, 350));
 
         jPanel11.setBackground(new java.awt.Color(255, 255, 255));
         jPanel11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -291,9 +348,9 @@ public class FrmCultivos extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_TxtNomActionPerformed
 
-    private void TxtSiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtSiemActionPerformed
+    private void TxtCosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtCosActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_TxtSiemActionPerformed
+    }//GEN-LAST:event_TxtCosActionPerformed
 
     private void TxtipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtipActionPerformed
         // TODO add your handling code here:
@@ -307,26 +364,25 @@ public class FrmCultivos extends javax.swing.JFrame {
         if(!TxtCodigo.isEditable()) return;
         int id = Integer.parseInt(TxtCodigo.getText());
         if (!controller.validatePK(id)){
-            vista.showError("La cedula ingresada ya se encuentra registrada");
+            showError("La cedula ingresada ya se encuentra registrada");
             TxtCodigo.setText("");
         }
     }//GEN-LAST:event_TxtCodigoActionPerformed
 
     private void AgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarActionPerformed
-         if (!controller.validateRequired(cultivos)) {
-        JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-    
-    try {
+         try {
+        // Inicializa el objeto cultivos antes de usarlo
         int codigo = Integer.parseInt(TxtCodigo.getText().trim());
         double area = Double.parseDouble(TxtAre.getText().trim());
-        LocalDate siembra = LocalDate.parse(TxtSiem.getText().trim());
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate siembra = LocalDate.parse(TxtCos.getText().trim(), formato);
+        LocalDate cosecha = LocalDate.parse(TxtCos.getText().trim(), formato);
         
         // Asegúrate de inicializar correctamente el objeto Trabajadores
         Trabajadores cedula = new Trabajadores();
-        cedula.setCedula(TxtCed.getText().trim()); // Asegúrate de que este método exista y funcione
-        
+        cedula.setCedula(TxtCed.getText().trim());
+
+        // Inicializa el objeto cultivos
         cultivos = new Cultivos(
             codigo,
             cedula, 
@@ -334,12 +390,19 @@ public class FrmCultivos extends javax.swing.JFrame {
             Txtip.getText().trim(), 
             area, 
             TxtEst.getText().trim(), 
-            siembra
+            siembra,
+                cosecha
         );
         
+        // Asegúrate de que cultivos no sea null antes de validar
+        if (!controller.validateRequired(cultivos)) {
+            JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         controller.insertar(cultivos);
-        clear();
-    } catch (NumberFormatException e) {
+//        clear();
+    } catch (SQLException e) {
         JOptionPane.showMessageDialog(this, "Error al insertar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_AgregarActionPerformed
@@ -351,7 +414,9 @@ public class FrmCultivos extends javax.swing.JFrame {
     }
 
     try {
-        LocalDate siembra = LocalDate.parse(TxtSiem.getText().trim());
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate siembra = LocalDate.parse(TxtCos.getText().trim(), formato);
+        LocalDate cosecha = LocalDate.parse(TxtCos.getText().trim(), formato);
         double area = Double.parseDouble(TxtAre.getText().trim());
         int codigo = Integer.parseInt(TxtCodigo.getText().trim());
         Trabajadores cedula = new Trabajadores();
@@ -362,10 +427,11 @@ public class FrmCultivos extends javax.swing.JFrame {
             Txtip.getText().trim(),
             area,   
             TxtEst.getText().trim(),
-            siembra
+            siembra,
+                cosecha
         );
         controller.update(cultivosActualizado);
-        clear();
+//        clear();
         // Actualizar la tabla con los nuevos datos
         controller.readAll();
     } catch (NumberFormatException e) {
@@ -387,7 +453,7 @@ public class FrmCultivos extends javax.swing.JFrame {
         Cultivos cultivosAEliminar = new Cultivos();
         cultivosAEliminar.setId(codigo);
         controller.delete(cultivosAEliminar);
-        clear();
+//        clear();
         controller.readAll();
         JOptionPane.showMessageDialog(this, "Trabajador eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     } catch (HeadlessException e) {
@@ -408,6 +474,10 @@ public class FrmCultivos extends javax.swing.JFrame {
         controller.readAll();
     }//GEN-LAST:event_jButton12ActionPerformed
 
+    private void TxtSiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtSiemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TxtSiemActionPerformed
+
     private void clear() {
         TxtCodigo.setText("");
         TxtCed.setText("");
@@ -416,6 +486,7 @@ public class FrmCultivos extends javax.swing.JFrame {
         Txtip.setText("");
         TxtEst.setText("");
         TxtSiem.setText("");
+        TxtCos.setText("");
     }
     
     /**
@@ -461,6 +532,7 @@ public class FrmCultivos extends javax.swing.JFrame {
     private javax.swing.JTextField TxtAre;
     private javax.swing.JTextField TxtCed;
     private javax.swing.JTextField TxtCodigo;
+    private javax.swing.JTextField TxtCos;
     private javax.swing.JTable TxtDatos;
     private javax.swing.JTextField TxtEst;
     private javax.swing.JTextField TxtID;
@@ -477,6 +549,7 @@ public class FrmCultivos extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel29;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;

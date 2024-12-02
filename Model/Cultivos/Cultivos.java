@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 public class Cultivos {
     private int id;
-    private Trabajadores cedula;
+    private Trabajadores cedula_trabajador;
     private String nombre;
     private String tipo;
     private double area_Sembrada;
@@ -23,8 +23,8 @@ public class Cultivos {
     
     
 
-    public Trabajadores getCedula() {
-        return cedula;
+    public Trabajadores getCedula_trabajador() {
+        return cedula_trabajador;
     }
 
     public String getNombre() {
@@ -71,8 +71,8 @@ public class Cultivos {
         this.fecha_cosecha = fecha_cosecha;
     }
 
-    public void setCedula(Trabajadores cedula) {
-        this.cedula = cedula;
+    public void setCedula_trabajador(Trabajadores cedula) {
+        this.cedula_trabajador = cedula;
     }
 
     public void setId(int id) {
@@ -85,7 +85,7 @@ public class Cultivos {
     
     public Cultivos(int id, Trabajadores cedula, String nombre, String tipo, double area_Sembrada, String estado_Crecimiento, LocalDate fecha_Siembra, LocalDate fecha_cosecha) {
         this.id = id;
-        this.cedula = cedula;
+        this.cedula_trabajador = cedula;
         this.nombre = nombre;
         this.tipo = tipo;
         this.area_Sembrada = area_Sembrada;
@@ -96,7 +96,7 @@ public class Cultivos {
 
     public Cultivos(int id, Trabajadores cedula, String nombre, String tipo, double area_Sembrada, String estado_Crecimiento, LocalDate fecha_Siembra) {
         this.id = id;
-        this.cedula = cedula;
+        this.cedula_trabajador = cedula;
         this.nombre = nombre;
         this.tipo = tipo;
         this.area_Sembrada = area_Sembrada;

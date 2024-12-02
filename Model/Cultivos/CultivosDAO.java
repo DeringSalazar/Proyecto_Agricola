@@ -18,9 +18,9 @@ public class CultivosDAO extends DAO<CultivosDTO>{
 
     @Override
     public boolean create(CultivosDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call InsertarCultivos(?, ?, ?, ?, ?, ?, ?)");
+        stmt = connection.prepareStatement("call InsertarCultivos(?, ?, ?, ?, ?, ?, ?, ?)");
             stmt.setInt(1, dto.getId());
-            stmt.setString(2, dto.getCedula());
+            stmt.setString(2, dto.getCedula_trabajador());
             stmt.setString(3, dto.getNombre());
             stmt.setString(4, dto.getTipo());
             stmt.setDouble(5, dto.getArea_Sembrada());
@@ -72,16 +72,16 @@ public class CultivosDAO extends DAO<CultivosDTO>{
 
     @Override
     public boolean update(CultivosDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call CultivoUpdate(?, ?, ?)");
+        stmt = connection.prepareStatement("call UpdateCultivos(?, ?, ?)");
         stmt.setInt(1, dto.getId());
-        stmt.setString(2, dto.getCedula());
+        stmt.setString(2, dto.getCedula_trabajador());
         stmt.setDate(3, dto.getFecha_cosecha());
         return stmt.executeUpdate()>0;
     }
 
     @Override
     public boolean delete(Object id) throws SQLException {
-        stmt = connection.prepareStatement("call CultivoDelete(?)");
+        stmt = connection.prepareStatement("call DeleteCultivos(?)");
         stmt.setString(1, String.valueOf(id));
         return stmt.executeUpdate()>0;
     }
