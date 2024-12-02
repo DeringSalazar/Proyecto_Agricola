@@ -487,7 +487,7 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
         ents.forEach(produccion->tablemodel.addRow(
                 new Object[]{
                     produccion.getId(),
-                    produccion.getIdCultivo(),
+                    produccion.getIdCultivo().getId(),
                     produccion.getFecha(),
                     produccion.getCalidad(),
                     produccion.getDestino(),

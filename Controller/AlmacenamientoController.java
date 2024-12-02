@@ -34,7 +34,7 @@ public class AlmacenamientoController {
         this.produccionController=produccionController;
         try {
             // Usamos FactoryProducer para obtener la fábrica correcta para "Cultivos"
-            DAOFactory factory = FactoryProducer.getFactory("Produccion"); // Indicamos el tipo de entidad
+            DAOFactory factory = FactoryProducer.getFactory("Almacenamiento"); // Indicamos el tipo de entidad
             this.dao = (DAO<AlmacenamientoDTO>) factory.createDAO(DataBase.getInstance().getConnection());
             this.mapper = (Mapper<Almacenamiento, AlmacenamientoDTO>) factory.createrMapper();
         } catch (SQLException e) {

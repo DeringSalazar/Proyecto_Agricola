@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 public class DataBase {
     private static DataBase instance;
     private Connection connection;
-    private final String URL = "jdbc:mysql://127.0.0.1:3307/produccionagricola";
+    private final String URL = "jdbc:mysql://127.0.0.1:3306/produccion_agricola";
     private final String USER = "root";
     private final String PASSWORD = "";
     
