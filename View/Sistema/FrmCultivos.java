@@ -7,6 +7,7 @@ package View.Sistema;
 import Controller.CultivosController;
 import Controller.TrabajadorController;
 import Model.Cultivos.Cultivos;
+import Model.Cultivos.CultivosDTO;
 import Model.Trabajador.Trabajadores;
 import UtilDate.UtilDate;
 import View.View;
@@ -16,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -404,19 +406,74 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
     }
     }//GEN-LAST:event_AgregarActionPerformed
 
+    private void cargarDatosCultivo(int id) {
+    CultivosDTO cultivo = controller.read(id, true); // Llama al método read con el id y true para mostrar mensajes
+    if (cultivo != null) {
+        TxtCodigo.setText(String.valueOf(cultivo.getId()));
+        TxtNom.setText(cultivo.getNombre());
+        Txtip.setText(cultivo.getTipo());
+        TxtAre.setText(String.valueOf(cultivo.getArea_Sembrada()));
+        TxtEst.setText(cultivo.getEstado_Crecimiento());
+        TxtSiem.setText(UtilDate.toString(UtilDate.toLocalDate(cultivo.getFecha_Siembra())));
+        TxtCos.setText(UtilDate.toString(UtilDate.toLocalDate(cultivo.getFecha_cosecha())));
+    } else {
+        JOptionPane.showMessageDialog(this, "Cultivo no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+    
     private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActualizarActionPerformed
+        // Verifica si hay una fila seleccionada en el JTable
+    int selectedRow = TxtDatos.getSelectedRow(); // Reemplaza 'yourJTable' con el nombre de tu JTable
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione un cultivo de la tabla.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Aquí puedes cargar los datos de la fila seleccionada en los JTextField
+    // Suponiendo que tu modelo de tabla tiene los datos en el orden correcto
+    int codigos = (int) TxtDatos.getValueAt(selectedRow, 0); // Ajusta el índice según la columna que contenga el código
+    String nombre = (String) TxtDatos.getValueAt(selectedRow, 1); // Ajusta el índice para el nombre
+    String tipo = (String) TxtDatos.getValueAt(selectedRow, 2); // Ajusta el índice para el tipo
+    double areas = (double) TxtDatos.getValueAt(selectedRow, 3); // Ajusta el índice para el área sembrada
+    String estado = (String) TxtDatos.getValueAt(selectedRow, 4); // Ajusta el índice para el estado
+    LocalDate fechaSiembra = (LocalDate) TxtDatos.getValueAt(selectedRow, 5); // Ajusta el índice para la fecha de siembra
+    LocalDate fechaCosecha = (LocalDate) TxtDatos.getValueAt(selectedRow, 6); // Ajusta el índice para la fecha de cosecha
+
+    // Cargar los datos en los JTextField
+    TxtCodigo.setText(String.valueOf(codigos));
+    TxtNom.setText(nombre);
+    Txtip.setText(tipo);
+    TxtAre.setText(String.valueOf(areas));
+    TxtEst.setText(estado);
+    TxtSiem.setText(UtilDate.toString(fechaSiembra)); // Usa UtilDate para convertir a String
+    TxtCos.setText(UtilDate.toString(fechaCosecha)); // Usa UtilDate para convertir a String
+
         if (!controller.validateRequired(cultivos)) {
         JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
     try {
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate siembra = LocalDate.parse(TxtCos.getText().trim(), formato);
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // Cambia el formato a 'dd/MM/yyyy'
+        
+        // Verifica que los campos de fecha no estén vacíos
+        if (TxtSiem.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "La fecha de siembra no puede estar vacía.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (TxtCos.getText().trim().isEmpty()) { // Asegúrate de tener un campo para la fecha de cosecha
+            JOptionPane.showMessageDialog(this, "La fecha de cosecha no puede estar vacía.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        LocalDate siembra = LocalDate.parse(TxtSiem.getText().trim(), formato);
         LocalDate cosecha = LocalDate.parse(TxtCos.getText().trim(), formato);
+        
         double area = Double.parseDouble(TxtAre.getText().trim());
         int codigo = Integer.parseInt(TxtCodigo.getText().trim());
-        Trabajadores cedula = new Trabajadores();
+        Trabajadores cedula = new Trabajadores(); // Asegúrate de asignar la cédula correctamente
+        
         Cultivos cultivosActualizado = new Cultivos(
             codigo,
             cedula, 
@@ -425,14 +482,16 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
             area,   
             TxtEst.getText().trim(),
             siembra,
-                cosecha
+            cosecha
         );
+        
         controller.update(cultivosActualizado);
         clear();
-        // Actualizar la tabla con los nuevos datos
-        controller.readAll();
+        controller.readAll(); // Actualiza la tabla con los nuevos datos
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "Error al actualizar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (DateTimeParseException e) {
+        JOptionPane.showMessageDialog(this, "Formato de fecha incorrecto: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_ActualizarActionPerformed
 

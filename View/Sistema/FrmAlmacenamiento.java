@@ -63,7 +63,7 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
                     Almacenamiento.getIdProducción().getId(),
                     Almacenamiento.getCantidad(),
                     UtilDate.toString(Almacenamiento.getFecha_Ingreso()),
-//                    UtilDate.toString(Almacenamiento.getFecha_cosecha())
+                    UtilDate.toString(Almacenamiento.getFecha_Retiro())
                 }
         ));
     }
@@ -103,10 +103,11 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     }
 
    private void clear() {
-        TxtCodigo.setText("");
+        TxtRetiro.setText("");
         jTextField10.setText("");
         jTextField9.setText("");
         jTextField22.setText("");
+        TxtRetiro.setText("");
     }
 
     
@@ -129,9 +130,8 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         jScrollPane2 = new javax.swing.JScrollPane();
         TxtDatos1 = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        TxtCodigo = new javax.swing.JTextField();
+        TxtRetiro = new javax.swing.JTextField();
         jTextField9 = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         Eliminar = new javax.swing.JButton();
@@ -141,6 +141,7 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         jTextField22 = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         jTextField10 = new javax.swing.JTextField();
+        jLabel25 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -179,14 +180,14 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
 
         TxtDatos1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Codigo", "Producción", "Cantidad", "Ingreso"
+                "Codigo", "Producción", "Cantidad", "Ingreso", "Retiro"
             }
         ));
         jScrollPane2.setViewportView(TxtDatos1);
@@ -199,27 +200,23 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         jPanel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel9.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
-        jLabel9.setText("Codigo: ");
-        jPanel8.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
-
         jLabel10.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel10.setText("Cantidad:");
-        jPanel8.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
+        jPanel8.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
 
-        TxtCodigo.addActionListener(new java.awt.event.ActionListener() {
+        TxtRetiro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TxtCodigoActionPerformed(evt);
+                TxtRetiroActionPerformed(evt);
             }
         });
-        jPanel8.add(TxtCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 300, -1));
+        jPanel8.add(TxtRetiro, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 130, 260, -1));
 
         jTextField9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField9ActionPerformed(evt);
             }
         });
-        jPanel8.add(jTextField9, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 90, 300, -1));
+        jPanel8.add(jTextField9, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, 300, -1));
 
         jLabel14.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jPanel8.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
@@ -255,7 +252,7 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         jPanel8.add(Actualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 90, 80));
 
         jLabel24.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
-        jLabel24.setText("Fecha de ingreso:  ");
+        jLabel24.setText("Fecha de retiro:  ");
         jPanel8.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
 
         jTextField22.addActionListener(new java.awt.event.ActionListener() {
@@ -263,18 +260,27 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
                 jTextField22ActionPerformed(evt);
             }
         });
-        jPanel8.add(jTextField22, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 130, 260, -1));
+        jPanel8.add(jTextField22, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 90, 260, -1));
 
         jLabel11.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel11.setText("Producción:");
-        jPanel8.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+        jPanel8.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
 
         jTextField10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField10ActionPerformed(evt);
             }
         });
-        jPanel8.add(jTextField10, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, 300, -1));
+        jTextField10.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField10KeyReleased(evt);
+            }
+        });
+        jPanel8.add(jTextField10, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, 300, -1));
+
+        jLabel25.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
+        jLabel25.setText("Fecha de ingreso:  ");
+        jPanel8.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
 
         PnAlmacenamiento.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 410, 350));
 
@@ -283,14 +289,9 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void TxtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtCodigoActionPerformed
-        if(!TxtCodigo.isEditable()) return;
-        int id = Integer.parseInt(TxtCodigo.getText());
-        if (!controller.validatePK(id)){
-            JOptionPane.showMessageDialog(this, "La codigo ingresado ya esta se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE); 
-            TxtCodigo.setText("");
-        }
-    }//GEN-LAST:event_TxtCodigoActionPerformed
+    private void TxtRetiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtRetiroActionPerformed
+        
+    }//GEN-LAST:event_TxtRetiroActionPerformed
 
     private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
         // TODO add your handling code here:
@@ -315,10 +316,11 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
 
     private void AgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarActionPerformed
         // Inicializa el objeto cultivos antes de usarlo
-        int codigo = Integer.parseInt(TxtCodigo.getText().trim());
+        int codigo = Integer.parseInt(TxtRetiro.getText().trim());
         int cantidad = Integer.parseInt(jTextField9.getText().trim());
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate fecha = LocalDate.parse(jTextField22.getText().trim(), formato);
+        LocalDate retiro = LocalDate.parse(TxtRetiro.getText().trim(), formato);
         // Asegúrate de inicializar correctamente el objeto Trabajadores
         Produccion produccion = new Produccion();
         produccion.setId(Integer.parseInt(jTextField10.getText().trim()));
@@ -327,7 +329,8 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
                 codigo,
                 produccion,
                 cantidad,
-                fecha
+                fecha,
+                retiro
         );
         // Asegúrate de que cultivos no sea null antes de validar
         if (!controller.validateRequired(almacenamiento)) {
@@ -344,16 +347,18 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         return;
     }
     try {
-        int codigo = Integer.parseInt(TxtCodigo.getText().trim());
+        int codigo = Integer.parseInt(TxtRetiro.getText().trim());
         int cantidad = Integer.parseInt(jTextField9.getText().trim());
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate fecha = LocalDate.parse(jTextField22.getText().trim(), formato);
+        LocalDate retiro = LocalDate.parse(TxtRetiro.getText().trim(), formato);
         Produccion produccion = new Produccion();
         Almacenamiento AlmacenamientoActualizado = new Almacenamiento(
             codigo,
             produccion, 
             cantidad,
-            fecha
+            fecha,
+                retiro
         );
         controller.update(AlmacenamientoActualizado);
         clear();
@@ -365,7 +370,7 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     }//GEN-LAST:event_ActualizarActionPerformed
 
     private void EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarActionPerformed
-        int codigo = Integer.parseInt(TxtCodigo.getText().trim());
+        int codigo = Integer.parseInt(TxtRetiro.getText().trim());
     if (codigo < 0) {
         JOptionPane.showMessageDialog(this, "Seleccione un trabajador para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
@@ -385,6 +390,15 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         JOptionPane.showMessageDialog(this, "Error al eliminar el trabajador: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_EliminarActionPerformed
+
+    private void jTextField10KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField10KeyReleased
+        if(!jTextField10.isEditable()) return;
+        int id = Integer.parseInt(jTextField10.getText());
+        if (!controller.validatePK(id)){
+            JOptionPane.showMessageDialog(this, "La codigo ingresado ya esta se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE); 
+            jTextField10.setText("");
+        }
+    }//GEN-LAST:event_jTextField10KeyReleased
 
     /**
      * @param args the command line arguments
@@ -426,17 +440,17 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     private javax.swing.JButton Agregar;
     private javax.swing.JButton Eliminar;
     private javax.swing.JPanel PnAlmacenamiento;
-    private javax.swing.JTextField TxtCodigo;
     private javax.swing.JTable TxtDatos1;
     private javax.swing.JTextField TxtID;
+    private javax.swing.JTextField TxtRetiro;
     private javax.swing.JButton jButton25;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;

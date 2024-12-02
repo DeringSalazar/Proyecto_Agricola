@@ -21,8 +21,6 @@ public class Cultivos {
         return id;
     }  
     
-    
-
     public Trabajadores getCedula_trabajador() {
         return cedula_trabajador;
     }
