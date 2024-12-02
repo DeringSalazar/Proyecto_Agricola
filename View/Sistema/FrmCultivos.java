@@ -401,7 +401,7 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
         }
 
         controller.insertar(cultivos);
-//        clear();
+        clear();
     } catch (SQLException e) {
         JOptionPane.showMessageDialog(this, "Error al insertar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
@@ -431,7 +431,7 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
                 cosecha
         );
         controller.update(cultivosActualizado);
-//        clear();
+        clear();
         // Actualizar la tabla con los nuevos datos
         controller.readAll();
     } catch (NumberFormatException e) {
@@ -453,7 +453,7 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
         Cultivos cultivosAEliminar = new Cultivos();
         cultivosAEliminar.setId(codigo);
         controller.delete(cultivosAEliminar);
-//        clear();
+        clear();
         controller.readAll();
         JOptionPane.showMessageDialog(this, "Trabajador eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     } catch (HeadlessException e) {
@@ -462,11 +462,11 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
     }//GEN-LAST:event_EliminarActionPerformed
 
     private void TxtIDKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtIDKeyReleased
-        String search =TxtID.getText();
-        if(search.trim().isEmpty()){
-            sorter.setRowFilter(null);
-        }else{
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)"+search));
+        String search = TxtID.getText();
+        if (search.trim().isEmpty()) {
+             sorter.setRowFilter(null);
+        } else {
+             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + search, 0));
         }
     }//GEN-LAST:event_TxtIDKeyReleased
 
