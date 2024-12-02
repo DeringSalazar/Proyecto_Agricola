@@ -4,19 +4,112 @@
  */
 package View.Sistema;
 
-/**
- *
- * @author Dering
- */
-public class FrmAlmacenamiento extends javax.swing.JFrame {
+import Controller.AlmacenamientoController;
+import Controller.CultivosController;
+import Controller.ProduccionController;
+import Controller.TrabajadorController;
+import Model.Almacenamiento.Almacenamiento;
+import Model.Cultivos.Cultivos;
+import Model.Producción.Produccion;
+import Model.Trabajador.Trabajadores;
+import UtilDate.UtilDate;
+import View.View;
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
-    /**
-     * Creates new form FrmAlmacenamiento
-     */
+public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almacenamiento>{
+    private AlmacenamientoController controller;
+    List<Almacenamiento> ents;
+    private ProduccionController trabajador;
+    private Produccion produccion;
+    private Almacenamiento almacenamiento;
+    private DefaultTableModel tablemodel;
+    TableRowSorter<TableModel> sorter;
+    
     public FrmAlmacenamiento() {
         initComponents();
+        controller = new AlmacenamientoController(this, trabajador);
+        this.setLocationRelativeTo(this);
+        tablemodel = (DefaultTableModel) TxtDatos1.getModel();
+        sorter = new TableRowSorter<>(this.TxtDatos1.getModel());
+        TxtDatos1.setRowSorter(sorter);
+        
+        Agregar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.readAll(); // Llama al método readAll del controlador
+            }
+        });
     }
 
+    public void setEnts(List<Almacenamiento> ents) {
+        this.ents = ents;
+        if (ents == null || tablemodel == null) return;
+        tablemodel.setNumRows(0);
+        
+        ents.forEach(Almacenamiento -> tablemodel.addRow(
+                new Object[]{
+                    Almacenamiento.getId(),
+                    Almacenamiento.getIdProducción().getId(),
+                    Almacenamiento.getCantidad(),
+                    UtilDate.toString(Almacenamiento.getFecha_Ingreso()),
+//                    UtilDate.toString(Almacenamiento.getFecha_cosecha())
+                }
+        ));
+    }
+    
+    @Override
+    public void show(Almacenamiento ent) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showAll(List<Almacenamiento> ents) {
+        if (ents == null || ents.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay almacenamientos disponibles", "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        setEnts(ents);
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void showSuccess(String msg) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showError(String err) {
+        JOptionPane.showMessageDialog(this, err, "Error", JOptionPane.ERROR_MESSAGE); 
+    }
+
+    @Override
+    public boolean validateRequired() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+   private void clear() {
+        TxtCodigo.setText("");
+        jTextField10.setText("");
+        jTextField9.setText("");
+        jTextField22.setText("");
+    }
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,7 +122,7 @@ public class FrmAlmacenamiento extends javax.swing.JFrame {
         PnAlmacenamiento = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        TxtID1 = new javax.swing.JTextField();
+        TxtID = new javax.swing.JTextField();
         jButton7 = new javax.swing.JButton();
         jButton25 = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
@@ -38,17 +131,16 @@ public class FrmAlmacenamiento extends javax.swing.JFrame {
         jPanel8 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
+        TxtCodigo = new javax.swing.JTextField();
         jTextField9 = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
+        Eliminar = new javax.swing.JButton();
+        Agregar = new javax.swing.JButton();
+        Actualizar = new javax.swing.JButton();
         jLabel24 = new javax.swing.JLabel();
-        jTextField21 = new javax.swing.JTextField();
         jTextField22 = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jTextField10 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -63,7 +155,13 @@ public class FrmAlmacenamiento extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Serif", 1, 18)); // NOI18N
         jLabel8.setText("Almacenamiento");
         jPanel6.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
-        jPanel6.add(TxtID1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, 580, -1));
+
+        TxtID.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                TxtIDKeyReleased(evt);
+            }
+        });
+        jPanel6.add(TxtID, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, 580, -1));
 
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/buscar.png"))); // NOI18N
         jButton7.setBorder(null);
@@ -88,7 +186,7 @@ public class FrmAlmacenamiento extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Codigo", "Cantidad", "Ingreso", "Retiro"
+                "Codigo", "Producción", "Cantidad", "Ingreso"
             }
         ));
         jScrollPane2.setViewportView(TxtDatos1);
@@ -107,66 +205,76 @@ public class FrmAlmacenamiento extends javax.swing.JFrame {
 
         jLabel10.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel10.setText("Cantidad:");
-        jPanel8.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+        jPanel8.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
 
-        jTextField8.addActionListener(new java.awt.event.ActionListener() {
+        TxtCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField8ActionPerformed(evt);
+                TxtCodigoActionPerformed(evt);
             }
         });
-        jPanel8.add(jTextField8, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 10, 300, -1));
+        jPanel8.add(TxtCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 300, -1));
 
         jTextField9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField9ActionPerformed(evt);
             }
         });
-        jPanel8.add(jTextField9, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 300, -1));
-
-        jLabel13.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
-        jLabel13.setText("Fecha de retiro:  ");
-        jPanel8.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
+        jPanel8.add(jTextField9, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 90, 300, -1));
 
         jLabel14.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jPanel8.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
 
-        jButton8.setBackground(new java.awt.Color(204, 204, 204));
-        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/borrar.png"))); // NOI18N
-        jButton8.setBorder(null);
-        jPanel8.add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 90, 80));
+        Eliminar.setBackground(new java.awt.Color(204, 204, 204));
+        Eliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/borrar.png"))); // NOI18N
+        Eliminar.setBorder(null);
+        Eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EliminarActionPerformed(evt);
+            }
+        });
+        jPanel8.add(Eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 90, 80));
 
-        jButton9.setBackground(new java.awt.Color(204, 204, 204));
-        jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/expediente.png"))); // NOI18N
-        jButton9.setBorder(null);
-        jPanel8.add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 90, 80));
+        Agregar.setBackground(new java.awt.Color(204, 204, 204));
+        Agregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/expediente.png"))); // NOI18N
+        Agregar.setBorder(null);
+        Agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AgregarActionPerformed(evt);
+            }
+        });
+        jPanel8.add(Agregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 90, 80));
 
-        jButton10.setBackground(new java.awt.Color(204, 204, 204));
-        jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/actualizar-datos.png"))); // NOI18N
-        jButton10.setBorder(null);
-        jPanel8.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 260, 90, 80));
-
-        jButton11.setBackground(new java.awt.Color(204, 204, 204));
-        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/guardar-el-archivo.png"))); // NOI18N
-        jButton11.setBorder(null);
-        jPanel8.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 260, 90, 80));
+        Actualizar.setBackground(new java.awt.Color(204, 204, 204));
+        Actualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/actualizar-datos.png"))); // NOI18N
+        Actualizar.setBorder(null);
+        Actualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ActualizarActionPerformed(evt);
+            }
+        });
+        jPanel8.add(Actualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 90, 80));
 
         jLabel24.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel24.setText("Fecha de ingreso:  ");
-        jPanel8.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
-
-        jTextField21.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField21ActionPerformed(evt);
-            }
-        });
-        jPanel8.add(jTextField21, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 130, 260, -1));
+        jPanel8.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
 
         jTextField22.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField22ActionPerformed(evt);
             }
         });
-        jPanel8.add(jTextField22, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 90, 260, -1));
+        jPanel8.add(jTextField22, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 130, 260, -1));
+
+        jLabel11.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
+        jLabel11.setText("Producción:");
+        jPanel8.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+
+        jTextField10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField10ActionPerformed(evt);
+            }
+        });
+        jPanel8.add(jTextField10, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, 300, -1));
 
         PnAlmacenamiento.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 410, 350));
 
@@ -175,21 +283,108 @@ public class FrmAlmacenamiento extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField8ActionPerformed
+    private void TxtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtCodigoActionPerformed
+        if(!TxtCodigo.isEditable()) return;
+        int id = Integer.parseInt(TxtCodigo.getText());
+        if (!controller.validatePK(id)){
+            JOptionPane.showMessageDialog(this, "La codigo ingresado ya esta se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE); 
+            TxtCodigo.setText("");
+        }
+    }//GEN-LAST:event_TxtCodigoActionPerformed
 
     private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField9ActionPerformed
 
-    private void jTextField21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField21ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField21ActionPerformed
-
     private void jTextField22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField22ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField22ActionPerformed
+
+    private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField10ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField10ActionPerformed
+
+    private void TxtIDKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtIDKeyReleased
+        String search = TxtID.getText();
+        if (search.trim().isEmpty()) {
+             sorter.setRowFilter(null);
+        } else {
+             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + search, 0));
+        }
+    }//GEN-LAST:event_TxtIDKeyReleased
+
+    private void AgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarActionPerformed
+        // Inicializa el objeto cultivos antes de usarlo
+        int codigo = Integer.parseInt(TxtCodigo.getText().trim());
+        int cantidad = Integer.parseInt(jTextField9.getText().trim());
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate fecha = LocalDate.parse(jTextField22.getText().trim(), formato);
+        // Asegúrate de inicializar correctamente el objeto Trabajadores
+        Produccion produccion = new Produccion();
+        produccion.setId(Integer.parseInt(jTextField10.getText().trim()));
+        // Inicializa el objeto cultivos
+        almacenamiento = new Almacenamiento(
+                codigo,
+                produccion,
+                cantidad,
+                fecha
+        );
+        // Asegúrate de que cultivos no sea null antes de validar
+        if (!controller.validateRequired(almacenamiento)) {
+            JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        controller.insertar(almacenamiento);
+        clear();
+    }//GEN-LAST:event_AgregarActionPerformed
+
+    private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActualizarActionPerformed
+        if (!controller.validateRequired(almacenamiento)) {
+        JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    try {
+        int codigo = Integer.parseInt(TxtCodigo.getText().trim());
+        int cantidad = Integer.parseInt(jTextField9.getText().trim());
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate fecha = LocalDate.parse(jTextField22.getText().trim(), formato);
+        Produccion produccion = new Produccion();
+        Almacenamiento AlmacenamientoActualizado = new Almacenamiento(
+            codigo,
+            produccion, 
+            cantidad,
+            fecha
+        );
+        controller.update(AlmacenamientoActualizado);
+        clear();
+        // Actualizar la tabla con los nuevos datos
+        controller.readAll();
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Error al actualizar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_ActualizarActionPerformed
+
+    private void EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarActionPerformed
+        int codigo = Integer.parseInt(TxtCodigo.getText().trim());
+    if (codigo < 0) {
+        JOptionPane.showMessageDialog(this, "Seleccione un trabajador para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    int confirm = JOptionPane.showConfirmDialog(  this,"¿Está seguro de que desea eliminar al trabajador con cédula: " + codigo + "?","Confirmar eliminación",JOptionPane.YES_NO_OPTION);
+    if (confirm != JOptionPane.YES_OPTION) {
+        return; 
+    }
+    try {
+        Almacenamiento AlmacenamientoAEliminar = new Almacenamiento();
+        AlmacenamientoAEliminar.setId(codigo);
+        controller.delete(AlmacenamientoAEliminar);
+        clear();
+        controller.readAll();
+        JOptionPane.showMessageDialog(this, "Trabajador eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    } catch (HeadlessException e) {
+        JOptionPane.showMessageDialog(this, "Error al eliminar el trabajador: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_EliminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -227,17 +422,17 @@ public class FrmAlmacenamiento extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Actualizar;
+    private javax.swing.JButton Agregar;
+    private javax.swing.JButton Eliminar;
     private javax.swing.JPanel PnAlmacenamiento;
+    private javax.swing.JTextField TxtCodigo;
     private javax.swing.JTable TxtDatos1;
-    private javax.swing.JTextField TxtID1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
+    private javax.swing.JTextField TxtID;
     private javax.swing.JButton jButton25;
     private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel8;
@@ -246,9 +441,8 @@ public class FrmAlmacenamiento extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField21;
+    private javax.swing.JTextField jTextField10;
     private javax.swing.JTextField jTextField22;
-    private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
     // End of variables declaration//GEN-END:variables
 }

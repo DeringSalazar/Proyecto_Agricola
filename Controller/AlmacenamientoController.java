@@ -9,6 +9,7 @@ import Factory.FactoryProducer;
 import Model.Almacenamiento.Almacenamiento;
 import Model.Almacenamiento.AlmacenamientoDAO;
 import Model.Almacenamiento.AlmacenamientoDTO;
+import Model.Cultivos.CultivosDTO;
 import Model.DAO.DAO;
 import Model.DAO.DAOFactory;
 import Model.Mapper.Mapper;
@@ -110,18 +111,17 @@ public class AlmacenamientoController {
         }
     }
     
-    public void delete(int cantidad) {
+    public void delete(Almacenamiento id) {
         try {
-            // Verificar si el almacenamiento existe antes de eliminarlo
-            if (!validatePK(cantidad)) {
-                vista.showError("El almacenamiento con la cantidad " + cantidad + " no existe.");
+            AlmacenamientoDTO almacenamientoDTO = dao.read(id.getId());
+            if (almacenamientoDTO == null) {
+                vista.showError("El cultivo con ID " + id.getId() + " no existe.");
                 return;
             }
-
-            dao.delete(cantidad);
-            vista.showMessage("Almacenamiento eliminado correctamente.");
+            dao.delete(id.getId()); 
+            vista.showMessage("Cultivo eliminado con éxito.");
         } catch (SQLException ex) {
-            vista.showError("Ocurrió un error al eliminar el almacenamiento: " + ex.getMessage());
+            vista.showError("Error al eliminar el cultivo: " + ex.getMessage());
         }
     }
      
@@ -134,7 +134,7 @@ public class AlmacenamientoController {
         try {
             return ((AlmacenamientoDAO) dao).validatePK(id);
         } catch (SQLException ex) {
-            Logger.getLogger(CultivosController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AlmacenamientoController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

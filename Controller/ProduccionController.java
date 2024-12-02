@@ -143,7 +143,7 @@ public class ProduccionController {
     }
      
    public boolean validateRequired(Produccion produccion) {
-    return produccion.getId() != 0 &&
+    return 
            (produccion.getIdCultivo() == null || produccion.getIdCultivo().getId() > 0) &&
            (produccion.getFecha() == null || produccion.getFecha() != null) &&
            !produccion.getCalidad().trim().isEmpty() &&

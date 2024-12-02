@@ -33,10 +33,7 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
     private Cultivos cultivos;
     private DefaultTableModel tablemodel;
     TableRowSorter<TableModel> sorter;
-    
-    /**
-     * Creates new form FrmCultivos
-     */
+
     public FrmCultivos() {
         initComponents();
         controller = new CultivosController(this, trabajador);
@@ -62,7 +59,7 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
         ents.forEach(Cultivos -> tablemodel.addRow(
                 new Object[]{
                     Cultivos.getId(),
-                    Cultivos.getCedula_trabajador(),
+                    Cultivos.getCedula_trabajador().getCedula(),
                     Cultivos.getNombre(),
                     Cultivos.getTipo(),
                     Cultivos.getArea_Sembrada(),
@@ -364,7 +361,7 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
         if(!TxtCodigo.isEditable()) return;
         int id = Integer.parseInt(TxtCodigo.getText());
         if (!controller.validatePK(id)){
-            showError("La cedula ingresada ya se encuentra registrada");
+            JOptionPane.showMessageDialog(this, "La codigo ingresado ya esta se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE); 
             TxtCodigo.setText("");
         }
     }//GEN-LAST:event_TxtCodigoActionPerformed

@@ -19,6 +19,14 @@ public class Produccion {
         return id;
     }
 
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public void setCalidad(String calidad) {
+        this.calidad = calidad;
+    }
+
     public Cultivos getIdCultivo() {
         return idCultivo;
     }

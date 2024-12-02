@@ -22,6 +22,10 @@ public class Almacenamiento {
         this.id = id;
     }
 
+    public void setIdProducción(Produccion idProducción) {
+        this.idProducción = idProducción;
+    }
+
     public void setFecha_Retiro(LocalDate fecha_Retiro) {
         this.fecha_Retiro = fecha_Retiro;
     }
@@ -49,6 +53,14 @@ public class Almacenamiento {
         this.fecha_Ingreso = fecha_Ingreso;
         this.fecha_Retiro = fecha_Retiro;
     }
+
+    public Almacenamiento(int id, Produccion idProducción, int cantidad, LocalDate fecha_Ingreso) {
+        this.id = id;
+        this.idProducción = idProducción;
+        this.cantidad = cantidad;
+        this.fecha_Ingreso = fecha_Ingreso;
+    }
+    
     
 
     public Almacenamiento() {

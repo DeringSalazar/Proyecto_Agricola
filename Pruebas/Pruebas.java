@@ -7,59 +7,74 @@ package Pruebas;
 import Controller.CultivosController;
 import Controller.ProduccionController;
 import Controller.TrabajadorController;
-import Controller.UsuariosControllers;
-import Model.Trabajador.TrabajadoresDAO;
-import Model.Trabajador.TrabajadoresDTO;
-import Model.UsuarioDAO;
-import Model.UsuarioDTO;
-import java.sql.SQLException;
-import Database.DataBase;
 import Model.Cultivos.Cultivos;
-import Model.Cultivos.CultivosDTO;
-import Model.Producción.ProduccionDTO;
-import Model.Trabajador.Trabajadores;
-import Model.Usuarios;
-import UtilDate.UtilDate;
+import Model.Producción.Produccion;
 import View.View;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDate;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Scanner;
 
-/**
- *
- * @author 9567
- */
-public class Pruebas {
+public class Pruebas implements View<Produccion>{
+private CultivosController controller;
+    private TrabajadorController trabajo;
+
+    public Pruebas() {
+        this.controller = new CultivosController(this, trabajo);
+    }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SQLException {
-         // Crear la vista de la consola
-//        ConsoleView view = new ConsoleView();
-//
-//        // Crear el controlador de trabajadores
-//        TrabajadorController trabajadorController = new TrabajadorController(view);
-//
-//        // Crear el controlador de cultivos, pasando el controlador de trabajadores
-//        CultivosController cultivosController = new CultivosController(view, trabajadorController);
-//
-//        // Datos del trabajador que no existe
-//        String cedulaTrabajador = "123456789"; // Cédula del trabajador que no existe
-//        Cultivos cultivo = new Cultivos();
-//        cultivo.setId(1); // ID del cultivo
-//        cultivo.setNombre("Maíz");
-//        cultivo.setTipo("Cereal");
-//        cultivo.setArea_Sembrada(100.0);
-//        cultivo.setEstado_Crecimiento("Creciendo");
-//        // Ejemplo de cómo usar los métodos correctamente
-//        cultivo.setFecha_Siembra(UtilDate.toLocalDate("11/11/2000"));
-//        cultivo.setFecha_Siembra(UtilDate.toLocalDate("15/11/2000"));
-//
-//
-//        // Intentar insertar el cultivo a un trabajador que no existe
-//        cultivosController.insertar(cultivo, cedulaTrabajador);
+        // Crear una instancia de Pruebas
+        Pruebas prueba = new Pruebas();
+        
+        // Crear una instancia del controlador de producción
+        ProduccionController produccionController = new ProduccionController(prueba, prueba.controller);
+
+        // Crear un objeto Cultivos (suponiendo que ya tienes un cultivo existente con ID 1)
+        Cultivos cultivo = new Cultivos();
+        cultivo.setId(1); // Asignar un ID de cultivo existente
+
+        // Crear un objeto Produccion con los datos necesarios
+        Produccion produccion = new Produccion();
+        produccion.setIdCultivo(cultivo);
+        produccion.setFecha(LocalDate.now());
+        produccion.setCalidad("Alta");
+        produccion.setDestino("Mercado Local");
+        produccion.setCantidad_Recolectada("100 kg");
+
+        // Llamar al método insertar
+        produccionController.insertar(produccion);
+    }
+
+    @Override
+    public void show(Produccion ent) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showAll(List<Produccion> ents) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        System.out.println(""+msg);
+    }
+
+    @Override
+    public void showSuccess(String msg) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showError(String err) {
+       System.out.println(""+err);
+    }
+
+    @Override
+    public boolean validateRequired() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
