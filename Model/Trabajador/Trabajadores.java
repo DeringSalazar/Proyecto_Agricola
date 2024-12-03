@@ -78,6 +78,10 @@ public class Trabajadores {
         this.horario = horario;
         this.salario = salario;
     }    
+
+    public Trabajadores(String cedula) {
+        this.cedula = cedula;
+    }
     
     public Trabajadores() {
         this("", "", "", "", "", "", 0.0);

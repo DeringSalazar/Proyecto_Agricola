@@ -5,19 +5,16 @@
 package View.Sistema;
 
 import Controller.AlmacenamientoController;
-import Controller.CultivosController;
 import Controller.ProduccionController;
-import Controller.TrabajadorController;
 import Model.Almacenamiento.Almacenamiento;
-import Model.Cultivos.Cultivos;
 import Model.Producción.Produccion;
-import Model.Trabajador.Trabajadores;
 import UtilDate.UtilDate;
+import View.FrmMenuCPA;
+import View.FrmMenuTCPA;
 import View.View;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -126,6 +123,7 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         TxtID = new javax.swing.JTextField();
         jButton7 = new javax.swing.JButton();
         jButton25 = new javax.swing.JButton();
+        jButton26 = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         TxtDatos1 = new javax.swing.JTable();
@@ -168,9 +166,23 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         jButton7.setBorder(null);
         jPanel6.add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 10, 40, 40));
 
-        jButton25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/xml (2).png"))); // NOI18N
+        jButton25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/left-chevron_10117734.png"))); // NOI18N
         jButton25.setBorder(null);
-        jPanel6.add(jButton25, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
+        jButton25.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton25ActionPerformed(evt);
+            }
+        });
+        jPanel6.add(jButton25, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 10, 40, 40));
+
+        jButton26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/arrow-left_10027259 (1).png"))); // NOI18N
+        jButton26.setBorder(null);
+        jButton26.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton26ActionPerformed(evt);
+            }
+        });
+        jPanel6.add(jButton26, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
 
         PnAlmacenamiento.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, 60));
 
@@ -400,6 +412,18 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         }
     }//GEN-LAST:event_jTextField10KeyReleased
 
+    private void jButton26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton26ActionPerformed
+        this.setVisible(false);
+        FrmMenuTCPA frm = new FrmMenuTCPA();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton26ActionPerformed
+
+    private void jButton25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton25ActionPerformed
+        this.setVisible(false);
+        FrmMenuCPA frm = new FrmMenuCPA();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton25ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -444,6 +468,7 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     private javax.swing.JTextField TxtID;
     private javax.swing.JTextField TxtRetiro;
     private javax.swing.JButton jButton25;
+    private javax.swing.JButton jButton26;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

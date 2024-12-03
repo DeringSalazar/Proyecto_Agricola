@@ -4,6 +4,10 @@
  */
 package View;
 
+import View.Sistema.FrmAlmacenamiento;
+import View.Sistema.FrmCultivos;
+import View.Sistema.FrmProduccion;
+
 /**
  *
  * @author Dering
@@ -55,6 +59,11 @@ public class FrmMenuCPA extends javax.swing.JFrame {
         jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/upload_9857947 (1).png"))); // NOI18N
         jButton1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 60, 220, 200));
 
         jButton3.setBackground(new java.awt.Color(102, 255, 102));
@@ -68,6 +77,11 @@ public class FrmMenuCPA extends javax.swing.JFrame {
         jButton3.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/garden_8718064 (1).png"))); // NOI18N
         jButton3.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 220, 200));
 
         jButton4.setBackground(new java.awt.Color(102, 255, 102));
@@ -81,6 +95,11 @@ public class FrmMenuCPA extends javax.swing.JFrame {
         jButton4.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/value-chain_18224872 (1).png"))); // NOI18N
         jButton4.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 60, 220, 200));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -106,6 +125,24 @@ public class FrmMenuCPA extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        this.setVisible(false);
+        FrmCultivos frm = new FrmCultivos();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        this.setVisible(false);
+        FrmProduccion frm = new FrmProduccion();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.setVisible(false);
+        FrmAlmacenamiento frm = new FrmAlmacenamiento();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

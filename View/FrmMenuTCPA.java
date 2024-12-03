@@ -4,6 +4,12 @@
  */
 package View;
 
+import View.Sistema.FrmAlmacenamiento;
+import View.Sistema.FrmCultivos;
+import View.Sistema.FrmProduccion;
+import View.Sistema.FrmTrabajo;
+import View.Sistema.FrmUsuarios;
+
 /**
  *
  * @author Dering
@@ -33,6 +39,7 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -41,23 +48,28 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/linea-diagonal.png"))); // NOI18N
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 210, 130, 130));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 210, 130, 130));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/linea-diagonal.png"))); // NOI18N
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(-10, -40, 220, 180));
 
         jButton1.setBackground(new java.awt.Color(102, 255, 102));
         jButton1.setFont(new java.awt.Font("Serif", 1, 18)); // NOI18N
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/upload_9857947.png"))); // NOI18N
-        jButton1.setText("Almacenamiento");
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/manager_6454392.png"))); // NOI18N
+        jButton1.setText("Usuario");
         jButton1.setBorder(null);
         jButton1.setContentAreaFilled(false);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/upload_9857947.png"))); // NOI18N
-        jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/upload_9857947 (1).png"))); // NOI18N
+        jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/manager_6454392.png"))); // NOI18N
+        jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/manager_6454392 (1).png"))); // NOI18N
         jButton1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 70, 220, 200));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 70, 220, 200));
 
         jButton2.setBackground(new java.awt.Color(102, 255, 102));
         jButton2.setFont(new java.awt.Font("Serif", 1, 18)); // NOI18N
@@ -70,6 +82,11 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
         jButton2.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/farmer_560168 (2).png"))); // NOI18N
         jButton2.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, 220, 200));
 
         jButton3.setBackground(new java.awt.Color(102, 255, 102));
@@ -83,6 +100,11 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
         jButton3.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/garden_8718064 (1).png"))); // NOI18N
         jButton3.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 70, 220, 200));
 
         jButton4.setBackground(new java.awt.Color(102, 255, 102));
@@ -96,12 +118,65 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
         jButton4.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/value-chain_18224872 (1).png"))); // NOI18N
         jButton4.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 70, 220, 200));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 320));
+        jButton5.setBackground(new java.awt.Color(102, 255, 102));
+        jButton5.setFont(new java.awt.Font("Serif", 1, 18)); // NOI18N
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/upload_9857947.png"))); // NOI18N
+        jButton5.setText("Almacenamiento");
+        jButton5.setBorder(null);
+        jButton5.setContentAreaFilled(false);
+        jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton5.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/upload_9857947.png"))); // NOI18N
+        jButton5.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/upload_9857947 (1).png"))); // NOI18N
+        jButton5.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        jButton5.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 70, 220, 200));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1160, 320));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        this.setVisible(false);
+        FrmTrabajo frm = new FrmTrabajo();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        this.setVisible(false);
+        FrmCultivos frm = new FrmCultivos();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        this.setVisible(false);
+        FrmProduccion frm = new FrmProduccion();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.setVisible(false);
+        FrmUsuarios frm = new FrmUsuarios();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        this.setVisible(false);
+        FrmAlmacenamiento frm = new FrmAlmacenamiento();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -143,6 +218,7 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;

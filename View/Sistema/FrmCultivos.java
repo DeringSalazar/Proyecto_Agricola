@@ -6,21 +6,25 @@ package View.Sistema;
 
 import Controller.CultivosController;
 import Controller.TrabajadorController;
+import Database.DataBase;
 import Model.Cultivos.Cultivos;
+import Model.Cultivos.CultivosDAO;
 import Model.Cultivos.CultivosDTO;
 import Model.Trabajador.Trabajadores;
+import Model.Trabajador.TrabajadoresDAO;
+import Model.Trabajador.TrabajadoresDTO;
 import UtilDate.UtilDate;
+import View.FrmMenuCPA;
+import View.FrmMenuTCPA;
 import View.View;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -145,6 +149,8 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
         TxtID = new javax.swing.JTextField();
         jButton12 = new javax.swing.JButton();
         jButton23 = new javax.swing.JButton();
+        jButton25 = new javax.swing.JButton();
+        jButton26 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -326,9 +332,32 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
         });
         jPanel9.add(jButton12, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 10, 40, 40));
 
-        jButton23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/xml (2).png"))); // NOI18N
+        jButton23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/buscar.png"))); // NOI18N
         jButton23.setBorder(null);
-        jPanel9.add(jButton23, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
+        jButton23.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton23ActionPerformed(evt);
+            }
+        });
+        jPanel9.add(jButton23, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 10, 40, 40));
+
+        jButton25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/arrow-left_10027259 (1).png"))); // NOI18N
+        jButton25.setBorder(null);
+        jButton25.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton25ActionPerformed(evt);
+            }
+        });
+        jPanel9.add(jButton25, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
+
+        jButton26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/left-chevron_10117734.png"))); // NOI18N
+        jButton26.setBorder(null);
+        jButton26.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton26ActionPerformed(evt);
+            }
+        });
+        jPanel9.add(jButton26, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 10, 40, 40));
 
         getContentPane().add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, 60));
 
@@ -374,7 +403,7 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
         int codigo = Integer.parseInt(TxtCodigo.getText().trim());
         double area = Double.parseDouble(TxtAre.getText().trim());
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate siembra = LocalDate.parse(TxtCos.getText().trim(), formato);
+        LocalDate siembra = LocalDate.parse(TxtSiem.getText().trim(), formato);
         LocalDate cosecha = LocalDate.parse(TxtCos.getText().trim(), formato);
         
         // Asegúrate de inicializar correctamente el objeto Trabajadores
@@ -422,98 +451,100 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
 }
     
     private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActualizarActionPerformed
-        // Verifica si hay una fila seleccionada en el JTable
-    int selectedRow = TxtDatos.getSelectedRow(); // Reemplaza 'yourJTable' con el nombre de tu JTable
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Por favor, seleccione un cultivo de la tabla.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
+try {
+        // Obtener el ID del cultivo a actualizar
+        String cedula = TxtCed.getText().trim();
+        TrabajadoresDAO cultivosDAO = new TrabajadoresDAO(DataBase.getInstance().getConnection());
+        TrabajadoresDTO cultivoDTO = cultivosDAO.read(cedula);
 
-    // Aquí puedes cargar los datos de la fila seleccionada en los JTextField
-    // Suponiendo que tu modelo de tabla tiene los datos en el orden correcto
-    int codigos = (int) TxtDatos.getValueAt(selectedRow, 0); // Ajusta el índice según la columna que contenga el código
-    String nombre = (String) TxtDatos.getValueAt(selectedRow, 1); // Ajusta el índice para el nombre
-    String tipo = (String) TxtDatos.getValueAt(selectedRow, 2); // Ajusta el índice para el tipo
-    double areas = (double) TxtDatos.getValueAt(selectedRow, 3); // Ajusta el índice para el área sembrada
-    String estado = (String) TxtDatos.getValueAt(selectedRow, 4); // Ajusta el índice para el estado
-    LocalDate fechaSiembra = (LocalDate) TxtDatos.getValueAt(selectedRow, 5); // Ajusta el índice para la fecha de siembra
-    LocalDate fechaCosecha = (LocalDate) TxtDatos.getValueAt(selectedRow, 6); // Ajusta el índice para la fecha de cosecha
+        // Verificar si el cultivo existe
+        if (cultivoDTO == null) {
+            JOptionPane.showMessageDialog(this, "Trabajador no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-    // Cargar los datos en los JTextField
-    TxtCodigo.setText(String.valueOf(codigos));
-    TxtNom.setText(nombre);
-    Txtip.setText(tipo);
-    TxtAre.setText(String.valueOf(areas));
-    TxtEst.setText(estado);
-    TxtSiem.setText(UtilDate.toString(fechaSiembra)); // Usa UtilDate para convertir a String
-    TxtCos.setText(UtilDate.toString(fechaCosecha)); // Usa UtilDate para convertir a String
-
-        if (!controller.validateRequired(cultivos)) {
-        JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    try {
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // Cambia el formato a 'dd/MM/yyyy'
-        
-        // Verifica que los campos de fecha no estén vacíos
+        int codigo = (int) tablemodel.getValueAt(TxtDatos.getSelectedRow(), 0);
+        String nombre = TxtNom.getText().trim();
+        String tipo = Txtip.getText().trim();
+        String estado = TxtEst.getText().trim();
+        // Validar que las fechas no estén vacías
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         if (TxtSiem.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "La fecha de siembra no puede estar vacía.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        if (TxtCos.getText().trim().isEmpty()) { // Asegúrate de tener un campo para la fecha de cosecha
+        if (TxtCos.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "La fecha de cosecha no puede estar vacía.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        LocalDate siembra = LocalDate.parse(TxtSiem.getText().trim(), formato);
-        LocalDate cosecha = LocalDate.parse(TxtCos.getText().trim(), formato);
-        
+        // Parsear las fechas de siembra y cosecha
+        LocalDate localFechaS = LocalDate.parse(TxtSiem.getText(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate localFechaC = LocalDate.parse(TxtCos.getText(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        Date fechaS = java.sql.Date.valueOf(localFechaS);
+        Date fechaC = java.sql.Date.valueOf(localFechaC);
+        // Obtener el área
         double area = Double.parseDouble(TxtAre.getText().trim());
-        int codigo = Integer.parseInt(TxtCodigo.getText().trim());
-        Trabajadores cedula = new Trabajadores(); // Asegúrate de asignar la cédula correctamente
-        
-        Cultivos cultivosActualizado = new Cultivos(
-            codigo,
-            cedula, 
-            TxtNom.getText().trim(), 
-            Txtip.getText().trim(),
-            area,   
-            TxtEst.getText().trim(),
-            siembra,
-            cosecha
-        );
-        
-        controller.update(cultivosActualizado);
+        CultivosDTO produccionDTO = new CultivosDTO(codigo, cedula, nombre, tipo, area, estado, (java.sql.Date) fechaS, (java.sql.Date) fechaC);
+        // Crear el objeto Cultivos actualizado, manteniendo los datos existentes
+        CultivosDAO produccionDAO = new CultivosDAO(DataBase.getInstance().getConnection());
+        boolean updated = produccionDAO.update(produccionDTO);
+        // Llama al método update del controller
+        if (updated) {
+            JOptionPane.showMessageDialog(this, "Cultivo actualizada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al actualizar el cultivo.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
         clear();
-        controller.readAll(); // Actualiza la tabla con los nuevos datos
+        controller.readAll();
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "Error al actualizar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     } catch (DateTimeParseException e) {
         JOptionPane.showMessageDialog(this, "Formato de fecha incorrecto: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al acceder a la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_ActualizarActionPerformed
 
     private void EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarActionPerformed
-        int codigo = Integer.parseInt(TxtCodigo.getText().trim());
-    if (codigo < 0) {
-        JOptionPane.showMessageDialog(this, "Seleccione un trabajador para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+        // Obtener la fila seleccionada en el JTable
+    int filaSeleccionada = TxtDatos.getSelectedRow(); // Asegúrate de que 'tablaCultivos' es el nombre de tu JTable
+
+    // Verificar si se ha seleccionado una fila
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione un cultivo para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
-    int confirm = JOptionPane.showConfirmDialog(  this,"¿Está seguro de que desea eliminar al trabajador con cédula: " + codigo + "?","Confirmar eliminación",JOptionPane.YES_NO_OPTION);
+
+    // Obtener el ID del cultivo de la columna correspondiente (suponiendo que el ID está en la primera columna)
+    int codigo = (int) TxtDatos.getValueAt(filaSeleccionada, 0); // Cambia el índice 0 si el ID está en otra columna
+
+    // Confirmar la eliminación
+    int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de que desea eliminar el cultivo con ID: " + codigo + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
     if (confirm != JOptionPane.YES_OPTION) {
         return; 
     }
+
     try {
+        // Crear el objeto Cultivos a eliminar
         Cultivos cultivosAEliminar = new Cultivos();
         cultivosAEliminar.setId(codigo);
+
+        // Llamar al método delete del controller
         controller.delete(cultivosAEliminar);
+        
+        // Limpiar los campos de entrada
         clear();
+        
+        // Actualizar la tabla con los nuevos datos
         controller.readAll();
-        JOptionPane.showMessageDialog(this, "Trabajador eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    } catch (HeadlessException e) {
-        JOptionPane.showMessageDialog(this, "Error al eliminar el trabajador: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        
+        // Mostrar mensaje de éxito
+        JOptionPane.showMessageDialog(this, "Cultivo eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        
+    } catch (Exception e) {
+        // Manejar cualquier excepción que pueda ocurrir
+        JOptionPane.showMessageDialog(this, "Error al eliminar el cultivo: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_EliminarActionPerformed
 
@@ -527,12 +558,52 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
     }//GEN-LAST:event_TxtIDKeyReleased
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
-        controller.readAll();
+        // Verifica si hay una fila seleccionada en el JTable
+    int selectedRow = TxtDatos.getSelectedRow(); // Reemplaza 'TxtDatos' con el nombre de tu JTable
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione un cultivo de la tabla.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Obtener el ID del cultivo seleccionado (ajusta el índice según la columna que contenga el ID)
+    Object id = TxtDatos.getValueAt(selectedRow, 0); // Suponiendo que el ID está en la primera columna
+
+    // Llamar al método read de CultivosController
+    CultivosDTO cultivoDTO = controller.read(id, true); // 'controller' es una instancia de CultivosController
+
+    // Verificar si se encontró el cultivo
+    if (cultivoDTO != null) {
+        // Cargar los datos en los JTextField
+        TxtCodigo.setText(String.valueOf(cultivoDTO.getId()));
+        TxtCed.setText(cultivoDTO.getCedula_trabajador());// Ajusta según el método get de tu DTO
+        TxtNom.setText(cultivoDTO.getNombre()); // Ajusta según el método get de tu DTO
+        Txtip.setText(cultivoDTO.getTipo()); // Ajusta según el método get de tu DTO
+        TxtAre.setText(String.valueOf(cultivoDTO.getArea_Sembrada())); // Ajusta según el método get de tu DTO
+        TxtEst.setText(cultivoDTO.getEstado_Crecimiento()); // Ajusta según el método get de tu DTO
+        TxtSiem.setText(UtilDate.toString(UtilDate.toLocalDate(cultivoDTO.getFecha_Siembra()))); // Usa UtilDate para convertir a String
+        TxtCos.setText(UtilDate.toString(UtilDate.toLocalDate(cultivoDTO.getFecha_cosecha()))); // Usa UtilDate para convertir a String
+    }
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void TxtSiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtSiemActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_TxtSiemActionPerformed
+
+    private void jButton23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton23ActionPerformed
+        controller.readAll();
+    }//GEN-LAST:event_jButton23ActionPerformed
+
+    private void jButton25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton25ActionPerformed
+        this.setVisible(false);
+        FrmMenuTCPA frm = new FrmMenuTCPA();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton25ActionPerformed
+
+    private void jButton26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton26ActionPerformed
+        this.setVisible(false);
+        FrmMenuCPA frm = new FrmMenuCPA();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton26ActionPerformed
 
     private void clear() {
         TxtCodigo.setText("");
@@ -597,6 +668,8 @@ public class FrmCultivos extends javax.swing.JFrame implements View<Cultivos>{
     private javax.swing.JTextField Txtip;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton23;
+    private javax.swing.JButton jButton25;
+    private javax.swing.JButton jButton26;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;

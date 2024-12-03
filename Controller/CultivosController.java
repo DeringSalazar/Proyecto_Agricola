@@ -89,18 +89,18 @@ public class CultivosController {
     }
         public void update(Cultivos cultivo) {
         try {
-            CultivosDTO cultivoDTO = dao.read(cultivo.getId());
-            if (cultivoDTO == null) {
-                viewerror.showError("El cultivo con ID " + cultivo.getId() + " no existe.");
-                return;
-            }
-            TrabajadoresDTO trabajadorDTO = control.read(cultivo.getCedula_trabajador().getCedula(), false);
-            if (trabajadorDTO == null) {
-                viewerror.showError("El trabajador con la cédula " + cultivo.getCedula_trabajador().getCedula() + " no existe. Agrega una cédula existente.");
-                return;
-            }
-            Trabajadores trabajador = control.mapper.toEntity(trabajadorDTO);
-            cultivo.setCedula_trabajador(trabajador);
+//            CultivosDTO cultivoDTO = dao.read(cultivo.getId());
+//            if (cultivoDTO == null) {
+//                viewerror.showError("El cultivo con ID " + cultivo.getId() + " no existe.");
+//                return;
+//            }
+//            TrabajadoresDTO trabajadorDTO = control.read(cultivo.getCedula_trabajador().getCedula(), false);
+//            if (trabajadorDTO == null) {
+//                viewerror.showError("El trabajador con la cédula " + cultivo.getCedula_trabajador().getCedula() + " no existe. Agrega una cédula existente.");
+//                return;
+//            }
+//            Trabajadores trabajador = control.mapper.toEntity(trabajadorDTO);
+//            cultivo.setCedula_trabajador(trabajador);
             if (!validateRequired(cultivo)) {
                 viewerror.showError("Faltan datos requeridos para el cultivo.");
                 return;

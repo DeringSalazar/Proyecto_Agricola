@@ -18,7 +18,7 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public boolean create(ProduccionDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call InsertarProducciones(?,?,?,?,?)");
+        stmt = connection.prepareStatement("call InsertarProduccion(?,?,?,?,?)");
         stmt.setInt(1, dto.getIdCultivo());
         stmt.setDate(2, dto.getFecha());
         stmt.setString(3, dto.getCalidad());

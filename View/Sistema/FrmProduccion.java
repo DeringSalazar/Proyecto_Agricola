@@ -15,10 +15,9 @@ import Model.Producción.Produccion;
 import Model.Producción.ProduccionDTO;
 import Model.Producción.ProducciónDAO;
 import UtilDate.UtilDate;
-import UtilDate.UtilGui;
+import View.FrmMenuCPA;
+import View.FrmMenuTCPA;
 import View.View;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -27,8 +26,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.RowFilter;
 
@@ -97,6 +94,8 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
         TxtID3 = new javax.swing.JTextField();
         jButton17 = new javax.swing.JButton();
         btnGenerarXML = new javax.swing.JButton();
+        jButton25 = new javax.swing.JButton();
+        jButton26 = new javax.swing.JButton();
         jPanel13 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
@@ -156,7 +155,25 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
                 btnGenerarXMLActionPerformed(evt);
             }
         });
-        jPanel12.add(btnGenerarXML, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
+        jPanel12.add(btnGenerarXML, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 10, 40, 40));
+
+        jButton25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/arrow-left_10027259 (1).png"))); // NOI18N
+        jButton25.setBorder(null);
+        jButton25.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton25ActionPerformed(evt);
+            }
+        });
+        jPanel12.add(jButton25, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
+
+        jButton26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/left-chevron_10117734.png"))); // NOI18N
+        jButton26.setBorder(null);
+        jButton26.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton26ActionPerformed(evt);
+            }
+        });
+        jPanel12.add(jButton26, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 10, 40, 40));
 
         PnProducción.add(jPanel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, 60));
 
@@ -454,6 +471,18 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
     }
     }//GEN-LAST:event_btnGenerarXMLActionPerformed
 
+    private void jButton25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton25ActionPerformed
+        this.setVisible(false);
+        FrmMenuTCPA frm = new FrmMenuTCPA();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton25ActionPerformed
+
+    private void jButton26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton26ActionPerformed
+        this.setVisible(false);
+        FrmMenuCPA frm = new FrmMenuCPA();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton26ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -501,6 +530,8 @@ public class FrmProduccion extends javax.swing.JFrame implements View<Produccion
     private javax.swing.JButton btnGenerarXML;
     private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton21;
+    private javax.swing.JButton jButton25;
+    private javax.swing.JButton jButton26;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel15;

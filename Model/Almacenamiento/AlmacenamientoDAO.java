@@ -27,7 +27,7 @@ public class AlmacenamientoDAO extends DAO<AlmacenamientoDTO>{
 
     @Override
     public AlmacenamientoDTO read(Object id) throws SQLException {
-        stmt = connection.prepareStatement("call AlmacenamientoRead(?)");
+        stmt = connection.prepareStatement("call ReadAlmacenamiento(?)");
         stmt.setString(1,String.valueOf(id));
         rs = stmt.executeQuery();
         if(rs.next()){

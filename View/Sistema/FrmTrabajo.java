@@ -7,6 +7,7 @@ package View.Sistema;
 import Controller.TrabajadorController;
 import Model.Trabajador.Trabajadores;
 import UtilDate.UtilGui;
+import View.FrmMenuTCPA;
 import View.View;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -77,7 +78,7 @@ public class FrmTrabajo extends javax.swing.JFrame implements View<Trabajadores>
         jLabel1 = new javax.swing.JLabel();
         TxtID = new javax.swing.JTextField();
         btnBuscarID = new javax.swing.JButton();
-        jButton22 = new javax.swing.JButton();
+        jButton25 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         TxtSalario = new javax.swing.JTextField();
@@ -139,9 +140,14 @@ public class FrmTrabajo extends javax.swing.JFrame implements View<Trabajadores>
         });
         jPanel3.add(btnBuscarID, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 10, 40, 40));
 
-        jButton22.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/xml (2).png"))); // NOI18N
-        jButton22.setBorder(null);
-        jPanel3.add(jButton22, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
+        jButton25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/arrow-left_10027259 (1).png"))); // NOI18N
+        jButton25.setBorder(null);
+        jButton25.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton25ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButton25, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, 40, 40));
 
         PnTrabajador.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, 60));
 
@@ -418,6 +424,12 @@ public class FrmTrabajo extends javax.swing.JFrame implements View<Trabajadores>
 
     }//GEN-LAST:event_btnActualizarActionPerformed
 
+    private void jButton25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton25ActionPerformed
+        this.setVisible(false);
+        FrmMenuTCPA frm = new FrmMenuTCPA();
+        frm.setVisible(true);
+    }//GEN-LAST:event_jButton25ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -468,7 +480,7 @@ public class FrmTrabajo extends javax.swing.JFrame implements View<Trabajadores>
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnBuscarID;
     private javax.swing.JButton btnDelete;
-    private javax.swing.JButton jButton22;
+    private javax.swing.JButton jButton25;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
