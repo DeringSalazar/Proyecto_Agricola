@@ -4,23 +4,29 @@
  */
 package View;
 
+import Controller.UsuariosControllers;
+import Model.UsuarioDTO;
 import View.Sistema.FrmAlmacenamiento;
 import View.Sistema.FrmCultivos;
 import View.Sistema.FrmProduccion;
 import View.Sistema.FrmTrabajo;
 import View.Sistema.FrmUsuarios;
+import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Dering
  */
-public class FrmMenuTCPA extends javax.swing.JFrame {
+public class FrmMenuTCPA extends javax.swing.JFrame implements View{
 
+    private UsuariosControllers control;
     /**
      * Creates new form FrmMenuTCPA
      */
     public FrmMenuTCPA() {
         initComponents();
+        control = new UsuariosControllers(this); 
     }
 
     /**
@@ -40,6 +46,7 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        btnSesion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -143,6 +150,14 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
         });
         jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 70, 220, 200));
 
+        btnSesion.setText("Cerrar Sesion");
+        btnSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSesionActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(1050, 10, -1, -1));
+
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1160, 320));
 
         pack();
@@ -177,6 +192,24 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
         FrmAlmacenamiento frm = new FrmAlmacenamiento();
         frm.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void btnSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSesionActionPerformed
+        try {
+            UsuarioDTO usuarioLogueado = control.getUsuarioLogueado();
+
+            if (usuarioLogueado != null) {
+                control.logueado = null;  
+            }
+
+            this.dispose(); 
+
+            FrmMenuGeneral menu = new FrmMenuGeneral();  
+            menu.setVisible(true);  
+            JOptionPane.showMessageDialog(this, "Se cerro correctamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cerrar sesión: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }  
+    }//GEN-LAST:event_btnSesionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -214,6 +247,7 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSesion;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -223,4 +257,34 @@ public class FrmMenuTCPA extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void show(Object ent) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showAll(List ents) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showSuccess(String msg) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void showError(String err) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean validateRequired() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

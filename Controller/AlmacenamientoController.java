@@ -33,8 +33,7 @@ public class AlmacenamientoController {
         this.vista = vista;
         this.produccionController=produccionController;
         try {
-            // Usamos FactoryProducer para obtener la fábrica correcta para "Cultivos"
-            DAOFactory factory = FactoryProducer.getFactory("Almacenamiento"); // Indicamos el tipo de entidad
+            DAOFactory factory = FactoryProducer.getFactory("Almacenamiento");
             this.dao = (DAO<AlmacenamientoDTO>) factory.createDAO(DataBase.getInstance().getConnection());
             this.mapper = (Mapper<Almacenamiento, AlmacenamientoDTO>) factory.createrMapper();
         } catch (SQLException e) {
@@ -130,13 +129,8 @@ public class AlmacenamientoController {
                 almacenamiento.getFecha_Ingreso() != null;
     }
 
-    public boolean validatePK(int id) {
-        try {
-            return ((AlmacenamientoDAO) dao).validatePK(id);
-        } catch (SQLException ex) {
-            Logger.getLogger(AlmacenamientoController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+    public boolean validatePK(int id) throws SQLException {
+        return ((AlmacenamientoDAO) dao).validatePK(id);
     }
 
 }

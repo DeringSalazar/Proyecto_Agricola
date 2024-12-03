@@ -33,14 +33,14 @@ import javax.xml.transform.stream.StreamResult;
 public class ProduccionController {
     private DAO<ProduccionDTO> dao;
     private View viewerror;
-    private Mapper<Produccion, ProduccionDTO> mapper;
+    public Mapper<Produccion, ProduccionDTO> mapper;
     private CultivosController cultivosController;
     
     public ProduccionController(View vista, CultivosController cultivosController) {
         this.viewerror = vista;
         this.cultivosController=cultivosController;
         try {
-            DAOFactory factory = FactoryProducer.getFactory("Produccion"); // Indicamos el tipo de entidad
+            DAOFactory factory = FactoryProducer.getFactory("Produccion"); 
             this.dao = (DAO<ProduccionDTO>) factory.createDAO(DataBase.getInstance().getConnection());
             this.mapper = (Mapper<Produccion, ProduccionDTO>) factory.createrMapper();
         } catch (SQLException e) {
@@ -50,21 +50,17 @@ public class ProduccionController {
     }
     
     public void insertar(Produccion produccion) {
-        // Validar si los campos necesarios no son nulos o vacíos
         if (!validateRequired(produccion)) {
             viewerror.showError("Faltan datos requeridos para la producción");
             return;
         }
 
         try {
-            // Verificar si el cultivo existe
             CultivosDTO cultivoDTO = cultivosController.read(produccion.getIdCultivo().getId(), false); // Suponiendo que Produccion tiene un objeto Cultivo
             if (cultivoDTO == null) {
                 viewerror.showError("El cultivo con ID " + produccion.getIdCultivo().getId() + " no existe.");
                 return;
             }
-
-            // Si el cultivo existe, insertamos la producción
             dao.create(mapper.toDto(produccion)); // Aquí mapeamos la entidad Produccion a ProduccionDTO y la insertamos
             viewerror.showMessage("Producción registrada con éxito");
 
@@ -153,14 +149,9 @@ public class ProduccionController {
 
 
     public boolean validatePK(int id) {
-        try {
-            return ((ProducciónDAO) dao).validatePK(id);
-        } catch (SQLException ex) {
-            Logger.getLogger(CultivosController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+        return ((ProducciónDAO) dao).validatePK(id);
     }
-    //cambiar metodo ahora en la noche
+
     public void generarReporteXML(List<ProduccionDTO> producciones) {
         try {
             // Crear un documento XML

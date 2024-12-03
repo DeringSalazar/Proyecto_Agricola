@@ -4,14 +4,14 @@
  */
 package proyecto.agricola;
 
-import View.FrmMenu;
+
 
 
 public class ProyectoAgricola {
 
     public static void main(String[] args) {
-        FrmMenu frm = new FrmMenu(); 
-        frm.setVisible(true);
+//        FrmMenu frm = new FrmMenu(); 
+//        frm.setVisible(true);
     }
     
 }

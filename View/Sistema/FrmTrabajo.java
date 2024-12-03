@@ -195,6 +195,7 @@ public class FrmTrabajo extends javax.swing.JFrame implements View<Trabajadores>
 
         TxtPuesto.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         TxtPuesto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Puesto", "Granjero", "Cultivador", "Ayudante Agricola", "Gerente Produccion", " " }));
+        TxtPuesto.setToolTipText("");
         TxtPuesto.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 TxtPuestoItemStateChanged(evt);

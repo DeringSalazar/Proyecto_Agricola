@@ -140,7 +140,7 @@ public class CultivosController {
         try {
             return ((CultivosDAO) dao).validatePK(id);
         } catch (SQLException ex) {
-            Logger.getLogger(CultivosController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TrabajadorController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

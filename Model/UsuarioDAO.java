@@ -23,7 +23,7 @@ public class UsuarioDAO extends DAO<UsuarioDTO>{
 
     @Override
     public boolean create(UsuarioDTO dto) throws SQLException {
-        String sql = "INSERT INTO Usuario (user_name, password, rol) VALUES (?, ?, ?)";
+        String sql = "call InsertarUsuarios(?,?,?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, dto.getUser_name());
             ps.setString(2, dto.getPassword());
@@ -34,7 +34,7 @@ public class UsuarioDAO extends DAO<UsuarioDTO>{
 
     @Override
     public UsuarioDTO read(Object id) throws SQLException {
-        String query = "SELECT * FROM Usuario WHERE user_name = ?";
+        String query = "call ReadUsuarios(?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, (String) id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -54,7 +54,7 @@ public class UsuarioDAO extends DAO<UsuarioDTO>{
     @Override
     public List<UsuarioDTO> readAll() throws SQLException {
          List<UsuarioDTO> usuarios = new ArrayList<>();
-        String query = "SELECT * FROM Usuario";
+        String query = "call ReadAllUsuarios()";
         try (PreparedStatement stmt = connection.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -71,30 +71,31 @@ public class UsuarioDAO extends DAO<UsuarioDTO>{
 
     @Override
     public boolean update(UsuarioDTO dto) throws SQLException {
-        String query = "UPDATE Usuario SET password = ?, rol = ? WHERE user_name = ?";
+        String query = "call UpdateUsuarios(?,?,?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, dto.getPassword());
-            stmt.setInt(2, dto.getRol());
-            stmt.setString(3, dto.getUser_name());
+            stmt.setString(1, dto.getUser_name());
+            stmt.setString(2, dto.getPassword());
+            stmt.setInt(3, dto.getRol());
             return stmt.executeUpdate() > 0;
         }
     }
 
     @Override
     public boolean delete(Object id) throws SQLException {
-        String query = "DELETE FROM Usuario WHERE user_name = ?";
+        String query = "call DeleteUsuarios(?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, (String) id);
             return stmt.executeUpdate() > 0;
         }
     }
     
-    public boolean validatePK(Object id) {
+    public boolean validatePK(String userName) {
         try {
-            return read(id)==null;
+            // Usa read para verificar si el usuario existe
+            return read(userName) == null; // Si no existe, es válido para registrar
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
+        return false; // Si hay error, asumimos que no es válido
     }
 }

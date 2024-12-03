@@ -17,20 +17,23 @@ import View.View;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class UsuariosControllers {
     
     private DAO<UsuarioDTO> dao;
     private Mapper<Usuarios, UsuarioDTO> mapper;
     private View view;
-    private UsuarioDTO logueado;
+    public UsuarioDTO logueado;
 
     public UsuariosControllers(View view) {
         this.view = view;
         try {
-            // Usamos la FactoryProducer para obtener la fábrica correcta para "Usuario"
-            DAOFactory factory = FactoryProducer.getFactory("Usuario"); // Aquí pasas el tipo de entidad, en este caso "Usuario"
-            dao = (DAO<UsuarioDTO>) factory.createDAO(DataBase.getInstance().getConnection()); // Usamos la fábrica para crear el DAO
+            
+            DAOFactory factory = FactoryProducer.getFactory("Usuario"); 
+            dao = (DAO<UsuarioDTO>) factory.createDAO(DataBase.getInstance().getConnection());
             mapper = (Mapper<Usuarios, UsuarioDTO>) factory.createrMapper(); 
         } catch (SQLException e) {
             view.showError("Error al conectar con la base de datos: " + e.getMessage());
@@ -48,21 +51,35 @@ public class UsuariosControllers {
                view.showMessage("El nombre de usuario ingresado ya está registrado.");
                return;
            }
-           // Encriptar la contraseña usando SHA-256
            String hashedPassword = convertirSHA256(usuario.getPassword());
            usuario.setPassword(hashedPassword);
-
-           // Crear el usuario en la base de datos
            dao.create(mapper.toDto(usuario));
            view.showMessage("Usuario registrado correctamente.");
        } catch (SQLException e) {
            view.showError("Error al guardar datos: " + e.getMessage());
        }
    }
+    
+        public UsuarioDTO read(Object id, boolean showMessage){
+        try {
+            UsuarioDTO trabajadoresDTO = dao.read(id);
+            if (trabajadoresDTO != null) {
+                if(showMessage){
+                    view.showMessage("Usuario no encontrado: " + trabajadoresDTO);
+                }
+                return trabajadoresDTO;
+            } else {
+                if(showMessage){
+                    view.showError("Usuario no encontrado con ID: " + id); 
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            view.showError("Error al buscar el Usuario: " + e.getMessage());
+            return null;
+        }
+    }
 
-
-
-    // Actualizar la contraseña de un usuario
     public void actualizarUsuario(Usuarios user) {
         if (user == null || !validateRequired(user)) {
             view.showError("Faltan datos requeridos");
@@ -73,22 +90,52 @@ public class UsuariosControllers {
                 view.showError("El usuario ingresado no se encuentra registrado");
                 return;
             }
-            // Encriptar la contraseña antes de actualizar
             String hashedPassword = convertirSHA256(user.getPassword());
             user.setPassword(hashedPassword);
 
-            // Convertir a DTO y actualizar
             dao.update(mapper.toDto(user));
             view.showSuccess("Usuario actualizado con éxito.");
         } catch (SQLException ex) {
             view.showError("Ocurrió un error al actualizar los datos: " + ex.getMessage());
         }
     }
+    public void readAll(){
+        try {
+         List<UsuarioDTO> dtoList = dao.readAll();
+         List<Usuarios> cultivosList = dtoList.stream()
+            .map(mapper::toEntity)
+             .filter(Objects::nonNull)
+             .collect(Collectors.toList());
+             view.showAll(cultivosList);
+           } catch (SQLException ex) {
+               view.showError("Error al cargar los datos: "+ ex.getMessage());
+           }
+        }
+    
+    public void delete(Usuarios user) {
+        // Verificar que el objeto usuario no sea nulo y que tenga los datos requeridos
+        if (user == null || !validateRequired(user)) {
+            view.showError("No hay ningún usuario cargado actualmente.");
+            return;
+        }
+
+        try {
+            // Verificar si el usuario existe en la base de datos
+            if (validatePK(user.getUser_name())) {
+                view.showError("El usuario con el nombre ingresado no se encuentra.");
+                return;
+            }
+
+            // Llamar al DAO para eliminar el usuario por el user_name
+            dao.delete(user.getUser_name());
+            view.showMessage("Se eliminó correctamente.");
+
+        } catch (SQLException ex) {
+            view.showError("Ocurrió un error al eliminar los datos: " + ex.getMessage());
+        }
+    }
 
 
-
-
-    // Iniciar sesión
     public boolean iniciarSesion(Usuarios user) {
     try {
         UsuarioDTO usuario = dao.read(user.getUser_name());
@@ -111,7 +158,6 @@ public class UsuariosControllers {
 }
 
 
-    // Cerrar sesión
     public void cerrarSesion() {
         if (logueado != null) {
             logueado = null;
@@ -121,7 +167,6 @@ public class UsuariosControllers {
         }
     }
 
-    // Obtener el usuario actualmente logueado
     public UsuarioDTO getUsuarioLogueado() {
         return logueado;
     }

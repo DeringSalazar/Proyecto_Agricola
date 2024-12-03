@@ -4,19 +4,71 @@
  */
 package View.Sistema;
 
+import Controller.UsuariosControllers;
+import Model.UsuarioDTO;
+import Model.Usuarios;
+import UtilDate.UtilGui;
 import View.FrmMenuTCPA;
+import View.View;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
  * @author Dering
  */
-public class FrmUsuarios extends javax.swing.JFrame {
-
+public class FrmUsuarios extends javax.swing.JFrame implements View<Usuarios>{
+    private UsuariosControllers control;
+    private Usuarios user;
+    private DefaultTableModel tablemodel;
+    TableRowSorter<TableModel> sorter;
     /**
      * Creates new form FrmUsuarios
      */
     public FrmUsuarios() {
         initComponents();
+        txtRol.addItem("Administrador");
+        txtRol.addItem("Trabajador");
+        control = new UsuariosControllers((View) this);
+        txtRol.setModel(new DefaultComboBoxModel<>(new String[]{"Administrador", "Trabajador"}));
+        txtRol.setSelectedIndex(-1); 
+        this.setLocationRelativeTo(this);
+        tablemodel = (DefaultTableModel) TxtDatos1.getModel();
+        sorter = new TableRowSorter<>(this.TxtDatos1.getModel());
+        TxtDatos1.setRowSorter(sorter);
+        
+        TxtDatos1.getSelectionModel().addListSelectionListener(evt -> {
+        if (!evt.getValueIsAdjusting()) {
+            int selectedRow = TxtDatos1.getSelectedRow();
+            if (selectedRow >= 0) {
+                // Obtener los valores de la fila seleccionada
+                String id = tablemodel.getValueAt(selectedRow, 0).toString();
+                String userName = tablemodel.getValueAt(selectedRow, 1).toString();
+                String encryptedPassword = tablemodel.getValueAt(selectedRow, 2).toString(); // Contraseña encriptada
+                String rol = tablemodel.getValueAt(selectedRow, 3).toString();
+
+                // Simulación de desencriptar para el JTextField
+                String originalPassword = desencriptarTemporalmente(encryptedPassword);
+
+                // Mostrar los datos en los campos
+                txtid.setText(id);
+                txtUserName1.setText(userName);
+                txtPassword.setText(originalPassword); // Mostrar desencriptada
+
+                // Actualizar el JComboBox con el rol
+                if ("Administrador".equals(rol)) {
+                    txtRol.setSelectedIndex(0); // Índice 0 para Administrador
+                } else if ("Trabajador".equals(rol)) {
+                    txtRol.setSelectedIndex(1); // Índice 1 para Trabajador
+                }
+            }
+        }
+    });
     }
 
     /**
@@ -39,15 +91,17 @@ public class FrmUsuarios extends javax.swing.JFrame {
         TxtDatos1 = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         Eliminar = new javax.swing.JButton();
         Agregar = new javax.swing.JButton();
         Actualizar = new javax.swing.JButton();
-        jTextField22 = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        TxtNombre = new javax.swing.JTextField();
+        txtid = new javax.swing.JTextField();
         jLabel25 = new javax.swing.JLabel();
+        txtRol = new javax.swing.JComboBox<>();
+        jLabel12 = new javax.swing.JLabel();
+        txtUserName1 = new javax.swing.JTextField();
+        txtPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -72,6 +126,11 @@ public class FrmUsuarios extends javax.swing.JFrame {
 
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/buscar.png"))); // NOI18N
         jButton7.setBorder(null);
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
         jPanel6.add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 10, 40, 40));
 
         jButton25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/arrow-left_10027259 (1).png"))); // NOI18N
@@ -91,14 +150,14 @@ public class FrmUsuarios extends javax.swing.JFrame {
 
         TxtDatos1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "User", "Password", "Rol"
+                "id", "User", "Password", "Rol"
             }
         ));
         jScrollPane2.setViewportView(TxtDatos1);
@@ -113,14 +172,7 @@ public class FrmUsuarios extends javax.swing.JFrame {
 
         jLabel10.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel10.setText("Contraseña: ");
-        jPanel8.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
-
-        jTextField9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField9ActionPerformed(evt);
-            }
-        });
-        jPanel8.add(jTextField9, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, 300, -1));
+        jPanel8.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, -1, -1));
 
         jLabel14.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jPanel8.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
@@ -155,32 +207,52 @@ public class FrmUsuarios extends javax.swing.JFrame {
         });
         jPanel8.add(Actualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 260, 90, 80));
 
-        jTextField22.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField22ActionPerformed(evt);
-            }
-        });
-        jPanel8.add(jTextField22, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 90, 300, -1));
-
         jLabel11.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
-        jLabel11.setText("Nombre:");
-        jPanel8.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
+        jLabel11.setText("ID");
+        jPanel8.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 30, -1));
 
-        TxtNombre.addActionListener(new java.awt.event.ActionListener() {
+        txtid.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TxtNombreActionPerformed(evt);
+                txtidActionPerformed(evt);
             }
         });
-        TxtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtid.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                TxtNombreKeyReleased(evt);
+                txtidKeyReleased(evt);
             }
         });
-        jPanel8.add(TxtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, 300, -1));
+        jPanel8.add(txtid, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 30, 300, -1));
 
         jLabel25.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel25.setText("Rol: ");
-        jPanel8.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
+        jPanel8.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, -1));
+
+        txtRol.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar", "Administrador", "Trabajador" }));
+        jPanel8.add(txtRol, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, 130, -1));
+
+        jLabel12.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
+        jLabel12.setText("Nombre:");
+        jPanel8.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
+
+        txtUserName1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtUserName1FocusLost(evt);
+            }
+        });
+        txtUserName1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUserName1ActionPerformed(evt);
+            }
+        });
+        txtUserName1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtUserName1KeyReleased(evt);
+            }
+        });
+        jPanel8.add(txtUserName1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 60, 300, -1));
+
+        txtPassword.setText("jPasswordField1");
+        jPanel8.add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 90, 300, -1));
 
         PnAlmacenamiento.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 410, 350));
 
@@ -190,42 +262,138 @@ public class FrmUsuarios extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void TxtIDKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtIDKeyReleased
-        
+        String search =TxtID.getText();
+        if(search.trim().isEmpty()){
+            sorter.setRowFilter(null);
+        }else{
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)"+search));
+        }
     }//GEN-LAST:event_TxtIDKeyReleased
 
-    private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField9ActionPerformed
-
     private void EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarActionPerformed
-        
+// Verificar que el campo de nombre de usuario no esté vacío
+    String userName = txtUserName1.getText().trim();
+    if (userName.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de usuario para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    try {
+        // Crear un objeto Usuario con el nombre de usuario
+        UsuarioDTO usuarioDTO = control.read(userName, false);
+        if (usuarioDTO == null) {
+            JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Crear un objeto Usuarios con la información del usuario
+        Usuarios usuario = new Usuarios(usuarioDTO.getId(), usuarioDTO.getUser_name(), usuarioDTO.getPassword(), usuarioDTO.getRol());
+
+        // Llamar al controlador para eliminar el usuario
+        control.delete(usuario);
+
+        // Limpiar los campos y recargar los datos
+        clear();
+        control.readAll(); // Recargar la lista de usuarios en la vista
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al eliminar el usuario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_EliminarActionPerformed
 
     private void AgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarActionPerformed
-        
+       if (!validateRequired()) {
+        JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+        // Validar que el rol sea válido
+        int rol = txtRol.getSelectedIndex();
+        if (rol == -1) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un rol válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            user = new Usuarios(
+                    0, // ID autoincremental
+                    txtUserName1.getText().trim(), // Usuario
+                    txtPassword.getText().trim(), // Contraseña
+                    rol // Rol: 0 para Administrador, 1 para Trabajador
+            );
+            control.registrarUsuario(user);
+            clear();
+            control.readAll();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al registrar el usuario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_AgregarActionPerformed
 
     private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActualizarActionPerformed
-       
+       if (!validateRequired()) {
+        JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    try {
+        // Obtenemos el ID del usuario y los nuevos valores
+        String userName = txtUserName1.getText().trim();
+        String password = txtPassword.getText().trim();
+        int rol = txtRol.getSelectedIndex(); // 0 para Admin, 1 para Trabajador
+
+        // Verificar si el usuario existe
+        UsuarioDTO usuarioDTO = control.read(userName, false);
+        if (usuarioDTO == null) {
+            JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Usuarios usuarioActualizado = new Usuarios(
+            usuarioDTO.getId(),  
+            userName,  
+            password,  
+            rol  
+        );
+        control.actualizarUsuario(usuarioActualizado);
+        clear();
+        control.readAll(); 
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al actualizar el usuario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_ActualizarActionPerformed
 
-    private void jTextField22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField22ActionPerformed
+    private void txtidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtidActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField22ActionPerformed
+    }//GEN-LAST:event_txtidActionPerformed
 
-    private void TxtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtNombreActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TxtNombreActionPerformed
-
-    private void TxtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtNombreKeyReleased
+    private void txtidKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtidKeyReleased
        
-    }//GEN-LAST:event_TxtNombreKeyReleased
+    }//GEN-LAST:event_txtidKeyReleased
 
     private void jButton25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton25ActionPerformed
         this.setVisible(false);
         FrmMenuTCPA frm = new FrmMenuTCPA();
         frm.setVisible(true);
     }//GEN-LAST:event_jButton25ActionPerformed
+
+    private void txtUserName1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUserName1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUserName1ActionPerformed
+
+    private void txtUserName1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUserName1KeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUserName1KeyReleased
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        control.readAll();
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void txtUserName1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtUserName1FocusLost
+         if(!txtUserName1.isEditable()) return;
+        String id = txtUserName1.getText();
+        if (id.trim().isEmpty()) return;
+        if (!control.validatePK(id)){
+             showError("El user_name ya ha sido ingresado");
+             txtUserName1.setText("");
+        }
+    }//GEN-LAST:event_txtUserName1FocusLost
 
     /**
      * @param args the command line arguments
@@ -269,11 +437,11 @@ public class FrmUsuarios extends javax.swing.JFrame {
     private javax.swing.JPanel PnAlmacenamiento;
     private javax.swing.JTable TxtDatos1;
     private javax.swing.JTextField TxtID;
-    private javax.swing.JTextField TxtNombre;
     private javax.swing.JButton jButton25;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel8;
@@ -281,7 +449,74 @@ public class FrmUsuarios extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField22;
-    private javax.swing.JTextField jTextField9;
+    private javax.swing.JPasswordField txtPassword;
+    private javax.swing.JComboBox<String> txtRol;
+    private javax.swing.JTextField txtUserName1;
+    private javax.swing.JTextField txtid;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void show(Usuarios ent) {
+        user=ent;
+        if (ent==null) {
+            clear();
+            return;
+        }
+        txtid.setText(String.valueOf(ent.getId()));
+        txtUserName1.setText(ent.getUser_name());
+        txtPassword.setText(ent.getPassword());
+        txtRol.setToolTipText(String.valueOf(ent.getRol()));
+    }
+
+    @Override
+    public void showAll(List<Usuarios> ents) {
+        if (ents == null || tablemodel == null) return;
+        tablemodel.setNumRows(0);
+        for (Usuarios user : ents) {
+            tablemodel.addRow(new Object[]{
+                user.getId(),
+                user.getUser_name(),
+                user.getPassword(), // Muestra la contraseña encriptada
+                user.getRol() == 0 ? "Administrador" : "Trabajador" // Traduce el rol
+            });
+        }
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+
+    }
+
+    @Override
+    public void showSuccess(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Informacion", JOptionPane.INFORMATION_MESSAGE);
+
+    }
+
+    @Override
+    public void showError(String err) {
+       JOptionPane.showMessageDialog(this, err, "Error", JOptionPane.ERROR_MESSAGE);
+
+    }
+
+    @Override
+    public boolean validateRequired() {
+        return UtilGui.validateFields(txtUserName1,txtPassword,txtRol);
+
+    }
+        private void clear(){
+        UtilGui.clearTxts(
+                txtid,
+                txtUserName1,
+                txtPassword,
+                txtRol
+        );
+    }
+    private String desencriptarTemporalmente(String hashedPassword) {
+    // Lógica para devolver la contraseña original.
+    // Si el sistema no almacena la original, puedes usar un mecanismo para mapear hashed <-> original durante la sesión.
+    // Este ejemplo asume que tienes algún tipo de mapeo disponible.
+    return hashedPassword.equals("hashed_example") ? "original_password" : "****";
+}
 }

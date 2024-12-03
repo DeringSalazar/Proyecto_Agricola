@@ -5,9 +5,12 @@
 package View.Sistema;
 
 import Controller.AlmacenamientoController;
+import Controller.CultivosController;
 import Controller.ProduccionController;
+import Controller.TrabajadorController;
 import Model.Almacenamiento.Almacenamiento;
 import Model.Producción.Produccion;
+import Model.Producción.ProduccionDTO;
 import UtilDate.UtilDate;
 import View.FrmMenuCPA;
 import View.FrmMenuTCPA;
@@ -15,9 +18,13 @@ import View.View;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -26,8 +33,11 @@ import javax.swing.table.TableRowSorter;
 
 public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almacenamiento>{
     private AlmacenamientoController controller;
+    private ProduccionController produccionController;  
+    private TrabajadorController trabajadorController; 
+    private CultivosController cultivosController; 
+    private ProduccionDTO produc;
     List<Almacenamiento> ents;
-    private ProduccionController trabajador;
     private Produccion produccion;
     private Almacenamiento almacenamiento;
     private DefaultTableModel tablemodel;
@@ -35,16 +45,18 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     
     public FrmAlmacenamiento() {
         initComponents();
-        controller = new AlmacenamientoController(this, trabajador);
+        cultivosController = new CultivosController(this, trabajadorController);
+        produccionController = new ProduccionController(this, cultivosController);
+        controller = new AlmacenamientoController(this, produccionController);
         this.setLocationRelativeTo(this);
         tablemodel = (DefaultTableModel) TxtDatos1.getModel();
         sorter = new TableRowSorter<>(this.TxtDatos1.getModel());
         TxtDatos1.setRowSorter(sorter);
-        
+
         Agregar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.readAll(); // Llama al método readAll del controlador
+                controller.readAll();  // Llamamos al método readAll del controlador
             }
         });
     }
@@ -53,14 +65,14 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         this.ents = ents;
         if (ents == null || tablemodel == null) return;
         tablemodel.setNumRows(0);
-        
-        ents.forEach(Almacenamiento -> tablemodel.addRow(
+
+        ents.forEach(almacenamiento -> tablemodel.addRow(
                 new Object[]{
-                    Almacenamiento.getId(),
-                    Almacenamiento.getIdProducción().getId(),
-                    Almacenamiento.getCantidad(),
-                    UtilDate.toString(Almacenamiento.getFecha_Ingreso()),
-                    UtilDate.toString(Almacenamiento.getFecha_Retiro())
+                    almacenamiento.getId(),
+                    almacenamiento.getIdProducción().getId(),
+                    almacenamiento.getCantidad(),
+                    UtilDate.toString(almacenamiento.getFecha_Ingreso()), 
+                    UtilDate.toString(almacenamiento.getFecha_Retiro()) 
                 }
         ));
     }
@@ -101,9 +113,10 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
 
    private void clear() {
         TxtRetiro.setText("");
-        jTextField10.setText("");
-        jTextField9.setText("");
-        jTextField22.setText("");
+        txtProduccion1.setText("");
+        txtAlmacenamiento.setText("");
+        txtCantidad.setText("");
+        txtFechaI.setText("");
         TxtRetiro.setText("");
     }
 
@@ -130,16 +143,18 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         TxtRetiro = new javax.swing.JTextField();
-        jTextField9 = new javax.swing.JTextField();
+        txtCantidad = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         Eliminar = new javax.swing.JButton();
         Agregar = new javax.swing.JButton();
         Actualizar = new javax.swing.JButton();
         jLabel24 = new javax.swing.JLabel();
-        jTextField22 = new javax.swing.JTextField();
+        txtFechaI = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        jTextField10 = new javax.swing.JTextField();
+        txtAlmacenamiento = new javax.swing.JTextField();
         jLabel25 = new javax.swing.JLabel();
+        txtProduccion1 = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -214,21 +229,21 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
 
         jLabel10.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel10.setText("Cantidad:");
-        jPanel8.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+        jPanel8.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
 
         TxtRetiro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 TxtRetiroActionPerformed(evt);
             }
         });
-        jPanel8.add(TxtRetiro, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 130, 260, -1));
+        jPanel8.add(TxtRetiro, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 140, 260, -1));
 
-        jTextField9.addActionListener(new java.awt.event.ActionListener() {
+        txtCantidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField9ActionPerformed(evt);
+                txtCantidadActionPerformed(evt);
             }
         });
-        jPanel8.add(jTextField9, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, 300, -1));
+        jPanel8.add(txtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 80, 300, -1));
 
         jLabel14.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jPanel8.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
@@ -265,34 +280,50 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
 
         jLabel24.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel24.setText("Fecha de retiro:  ");
-        jPanel8.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
+        jPanel8.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, -1));
 
-        jTextField22.addActionListener(new java.awt.event.ActionListener() {
+        txtFechaI.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField22ActionPerformed(evt);
+                txtFechaIActionPerformed(evt);
             }
         });
-        jPanel8.add(jTextField22, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 90, 260, -1));
+        jPanel8.add(txtFechaI, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 110, 260, -1));
 
         jLabel11.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
-        jLabel11.setText("Producción:");
-        jPanel8.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
+        jLabel11.setText("ID");
+        jPanel8.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 20, -1));
 
-        jTextField10.addActionListener(new java.awt.event.ActionListener() {
+        txtAlmacenamiento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField10ActionPerformed(evt);
+                txtAlmacenamientoActionPerformed(evt);
             }
         });
-        jTextField10.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtAlmacenamiento.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField10KeyReleased(evt);
+                txtAlmacenamientoKeyReleased(evt);
             }
         });
-        jPanel8.add(jTextField10, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, 300, -1));
+        jPanel8.add(txtAlmacenamiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 20, 300, -1));
 
         jLabel25.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
         jLabel25.setText("Fecha de ingreso:  ");
-        jPanel8.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
+        jPanel8.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
+
+        txtProduccion1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtProduccion1ActionPerformed(evt);
+            }
+        });
+        txtProduccion1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtProduccion1KeyReleased(evt);
+            }
+        });
+        jPanel8.add(txtProduccion1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 50, 300, -1));
+
+        jLabel12.setFont(new java.awt.Font("Serif", 1, 12)); // NOI18N
+        jLabel12.setText("Producción:");
+        jPanel8.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
 
         PnAlmacenamiento.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 410, 350));
 
@@ -305,17 +336,17 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         
     }//GEN-LAST:event_TxtRetiroActionPerformed
 
-    private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
+    private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField9ActionPerformed
+    }//GEN-LAST:event_txtCantidadActionPerformed
 
-    private void jTextField22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField22ActionPerformed
+    private void txtFechaIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaIActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField22ActionPerformed
+    }//GEN-LAST:event_txtFechaIActionPerformed
 
-    private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField10ActionPerformed
+    private void txtAlmacenamientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAlmacenamientoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField10ActionPerformed
+    }//GEN-LAST:event_txtAlmacenamientoActionPerformed
 
     private void TxtIDKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtIDKeyReleased
         String search = TxtID.getText();
@@ -327,30 +358,74 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     }//GEN-LAST:event_TxtIDKeyReleased
 
     private void AgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarActionPerformed
-        // Inicializa el objeto cultivos antes de usarlo
-        int codigo = Integer.parseInt(TxtRetiro.getText().trim());
-        int cantidad = Integer.parseInt(jTextField9.getText().trim());
+    try {
+        // Validar cantidad
+        int cantidad = 0;
+        if (!txtCantidad.getText().trim().isEmpty()) {
+            try {
+                cantidad = Integer.parseInt(txtCantidad.getText().trim());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "La cantidad debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "La cantidad no puede estar vacía.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate fecha = LocalDate.parse(jTextField22.getText().trim(), formato);
-        LocalDate retiro = LocalDate.parse(TxtRetiro.getText().trim(), formato);
-        // Asegúrate de inicializar correctamente el objeto Trabajadores
-        Produccion produccion = new Produccion();
-        produccion.setId(Integer.parseInt(jTextField10.getText().trim()));
-        // Inicializa el objeto cultivos
-        almacenamiento = new Almacenamiento(
-                codigo,
-                produccion,
-                cantidad,
-                fecha,
-                retiro
+        LocalDate fechaIngreso = null;
+        if (!txtFechaI.getText().trim().isEmpty()) {
+            try {
+                fechaIngreso = LocalDate.parse(txtFechaI.getText().trim(), formato);
+            } catch (DateTimeParseException e) {
+                JOptionPane.showMessageDialog(this, "La fecha de ingreso no tiene el formato correcto (yyyy-MM-dd).", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        LocalDate fechaRetiro = null;
+        if (!TxtRetiro.getText().trim().isEmpty()) {
+            try {
+                fechaRetiro = LocalDate.parse(TxtRetiro.getText().trim(), formato);
+            } catch (DateTimeParseException e) {
+                JOptionPane.showMessageDialog(this, "La fecha de retiro no tiene el formato correcto (yyyy-MM-dd).", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        int idProduccion;
+        try {
+            idProduccion = Integer.parseInt(txtProduccion1.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El ID de producción debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        ProduccionDTO produccionDTO = produccionController.read(idProduccion, false);
+        if (produccionDTO == null) {
+            JOptionPane.showMessageDialog(this, "El id_produccion " + idProduccion + " no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Produccion produccion = produccionController.mapper.toEntity(produccionDTO);
+        Almacenamiento almacenamiento = new Almacenamiento(
+            0,                
+            produccion,        
+            cantidad,          
+            fechaIngreso,     
+            fechaRetiro       
         );
-        // Asegúrate de que cultivos no sea null antes de validar
         if (!controller.validateRequired(almacenamiento)) {
             JOptionPane.showMessageDialog(this, "Faltan datos requeridos.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         controller.insertar(almacenamiento);
+        JOptionPane.showMessageDialog(this, "Almacenamiento agregado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         clear();
+        controller.readAll();
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error en la base de datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_AgregarActionPerformed
 
     private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActualizarActionPerformed
@@ -360,9 +435,9 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     }
     try {
         int codigo = Integer.parseInt(TxtRetiro.getText().trim());
-        int cantidad = Integer.parseInt(jTextField9.getText().trim());
+        int cantidad = Integer.parseInt(txtCantidad.getText().trim());
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate fecha = LocalDate.parse(jTextField22.getText().trim(), formato);
+        LocalDate fecha = LocalDate.parse(txtFechaI.getText().trim(), formato);
         LocalDate retiro = LocalDate.parse(TxtRetiro.getText().trim(), formato);
         Produccion produccion = new Produccion();
         Almacenamiento AlmacenamientoActualizado = new Almacenamiento(
@@ -374,7 +449,6 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         );
         controller.update(AlmacenamientoActualizado);
         clear();
-        // Actualizar la tabla con los nuevos datos
         controller.readAll();
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "Error al actualizar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -403,14 +477,18 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     }
     }//GEN-LAST:event_EliminarActionPerformed
 
-    private void jTextField10KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField10KeyReleased
-        if(!jTextField10.isEditable()) return;
-        int id = Integer.parseInt(jTextField10.getText());
-        if (!controller.validatePK(id)){
-            JOptionPane.showMessageDialog(this, "La codigo ingresado ya esta se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE); 
-            jTextField10.setText("");
+    private void txtAlmacenamientoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAlmacenamientoKeyReleased
+        try {
+            if(!txtAlmacenamiento.isEditable()) return;
+            int id = Integer.parseInt(txtAlmacenamiento.getText());
+            if (!controller.validatePK(id)){
+                JOptionPane.showMessageDialog(this, "La codigo ingresado ya esta se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                txtAlmacenamiento.setText("");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmAlmacenamiento.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jTextField10KeyReleased
+    }//GEN-LAST:event_txtAlmacenamientoKeyReleased
 
     private void jButton26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton26ActionPerformed
         this.setVisible(false);
@@ -423,6 +501,14 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
         FrmMenuCPA frm = new FrmMenuCPA();
         frm.setVisible(true);
     }//GEN-LAST:event_jButton25ActionPerformed
+
+    private void txtProduccion1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProduccion1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProduccion1ActionPerformed
+
+    private void txtProduccion1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtProduccion1KeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProduccion1KeyReleased
 
     /**
      * @param args the command line arguments
@@ -472,6 +558,7 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
@@ -480,8 +567,9 @@ public class FrmAlmacenamiento extends javax.swing.JFrame implements View<Almace
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField22;
-    private javax.swing.JTextField jTextField9;
+    private javax.swing.JTextField txtAlmacenamiento;
+    private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextField txtFechaI;
+    private javax.swing.JTextField txtProduccion1;
     // End of variables declaration//GEN-END:variables
 }

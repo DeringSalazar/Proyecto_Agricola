@@ -5,6 +5,7 @@
 package UtilDate;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
@@ -30,11 +31,13 @@ public class UtilDate {
         return java.sql.Date.valueOf(date);
     }
     
-    public static LocalDate toLocalDate(java.sql.Date date){
-        if(date==null) 
-            throw new IllegalArgumentException("La fecha no puede ser nula");
-        return date.toLocalDate();
+        public static LocalDate toLocalDate(java.sql.Date sqlDate) {
+        if (sqlDate == null) {
+            return null; // Maneja fechas nulas
+        }
+        return sqlDate.toLocalDate(); // Convierte correctamente java.sql.Date a java.time.LocalDate
     }
+
     
     public static LocalDate toLocalDate(String date){
         if(date==null || date.trim().isEmpty()) 
@@ -46,9 +49,10 @@ public class UtilDate {
         }
     }
     
-    public static String toString(LocalDate date){
-        if(date==null) 
-            throw new IllegalArgumentException("La fecha no puede ser nula");
+    public static String toString(LocalDate date) {
+        if (date == null) {
+            return ""; // Devuelve una cadena vacía para fechas nulas
+        }
         return date.format(DATE_FORMATTER);
     }
 }

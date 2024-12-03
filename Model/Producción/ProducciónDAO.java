@@ -5,10 +5,13 @@
 package Model.Producción;
 
 import Model.DAO.DAO;
+import Model.UsuarioDAO;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProducciónDAO extends DAO<ProduccionDTO> {
 
@@ -18,7 +21,7 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
 
     @Override
     public boolean create(ProduccionDTO dto) throws SQLException {
-        stmt = connection.prepareStatement("call InsertarProduccion(?,?,?,?,?)");
+        stmt = connection.prepareStatement("call InsertarProducciones(?,?,?,?,?)");
         stmt.setInt(1, dto.getIdCultivo());
         stmt.setDate(2, dto.getFecha());
         stmt.setString(3, dto.getCalidad());
@@ -81,8 +84,12 @@ public class ProducciónDAO extends DAO<ProduccionDTO> {
         return stmt.executeUpdate()>0;
     }
     
-    public boolean validatePK(Object id) throws SQLException {
-        return read(id) != null; // Devuelve true si el registro existe
+    public boolean validatePK(int id) {
+        try {
+            return read(id) == null; 
+        } catch (SQLException ex) {
+            Logger.getLogger(ProducciónDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false; 
     }
-
 }
